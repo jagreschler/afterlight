@@ -1,0 +1,13 @@
+# Installed packages and production build
+node_modules/
+dist/
+
+# Secrets. This repository is public.
+.env
+.env.*
+!.env.example
+
+# Local caches
+coverage/
+*.tsbuildinfo
+.DS_Store
