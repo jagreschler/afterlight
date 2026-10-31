@@ -1,8 +1,5 @@
+import { createDebouncedSearch } from "./debouncedSearch";
 import type { Song } from "./itunes";
-
-// Wait until typing pauses, and don't call iTunes for a single letter.
-const DEBOUNCE_MS = 300;
-const MIN_QUERY_LENGTH = 2;
 
 export type SearchBarOptions = {
   search: (query: string) => Promise<Song[]>;
@@ -35,27 +32,27 @@ export function mountSearchBar(root: HTMLElement, options: SearchBarOptions): vo
   status.setAttribute("aria-live", "polite");
   status.hidden = true;
 
-  const choice = document.createElement("article");
-  choice.className = "choice";
-  choice.setAttribute("aria-label", "Selected song");
-  choice.hidden = true;
-  const choiceImage = document.createElement("img");
-  choiceImage.alt = "";
-  const choiceText = document.createElement("div");
-  const choiceTitle = document.createElement("p");
-  choiceTitle.className = "choice-title";
-  const choiceArtist = document.createElement("p");
-  choiceArtist.className = "choice-artist";
-  choiceText.append(choiceTitle, choiceArtist);
-  choice.append(choiceImage, choiceText);
-
-  root.replaceChildren(label, input, list, status, choice);
+  root.replaceChildren(label, input, list, status);
   root.classList.add("search");
 
-  let requestId = 0;
-  let timer: number | undefined;
   let songs: Song[] = [];
   let activeIndex = 0;
+
+  const timing = createDebouncedSearch({
+    async search(query) {
+      status.hidden = false;
+      status.textContent = "Searching…";
+      return options.search(query);
+    },
+    onResults(found) {
+      showResults(found);
+    },
+    onError() {
+      hideList();
+      status.hidden = false;
+      status.textContent = "Search failed. Try again.";
+    },
+  });
 
   function hideList(): void {
     songs = [];
@@ -64,14 +61,6 @@ export function mountSearchBar(root: HTMLElement, options: SearchBarOptions): vo
     list.hidden = true;
     input.setAttribute("aria-expanded", "false");
     input.removeAttribute("aria-activedescendant");
-  }
-
-  function invalidate(): void {
-    requestId += 1;
-    if (timer !== undefined) {
-      window.clearTimeout(timer);
-      timer = undefined;
-    }
   }
 
   function paintActive(): void {
@@ -147,12 +136,7 @@ export function mountSearchBar(root: HTMLElement, options: SearchBarOptions): vo
       return;
     }
 
-    invalidate();
-    choiceImage.src = song.artworkUrl;
-    choiceImage.alt = `Artwork for ${song.trackName} by ${song.artistName}`;
-    choiceTitle.textContent = song.trackName;
-    choiceArtist.textContent = song.artistName;
-    choice.hidden = false;
+    timing.cancel();
     input.value = `${song.trackName} — ${song.artistName}`;
     hideList();
     status.hidden = true;
@@ -173,57 +157,12 @@ export function mountSearchBar(root: HTMLElement, options: SearchBarOptions): vo
     paintActive();
   }
 
-  async function runSearch(query: string, id: number): Promise<void> {
-    status.hidden = false;
-    status.textContent = "Searching…";
-
-    let found: Song[];
-    try {
-      found = await options.search(query);
-    } catch {
-      if (id !== requestId) {
-        return;
-      }
-      hideList();
-      status.hidden = false;
-      status.textContent = "Search failed. Try again.";
-      return;
-    }
-
-    if (id !== requestId) {
-      return;
-    }
-
-    showResults(found);
-  }
-
-  function onInput(): void {
-    invalidate();
+  input.addEventListener("input", () => {
     hideList();
     status.hidden = true;
+    timing.setQuery(input.value);
+  });
 
-    const query = input.value.trim();
-    if (query.length < MIN_QUERY_LENGTH) {
-      return;
-    }
-
-    const id = requestId;
-    timer = window.setTimeout(() => {
-      timer = undefined;
-      if (id !== requestId) {
-        return;
-      }
-
-      const current = input.value.trim();
-      if (current.length < MIN_QUERY_LENGTH) {
-        return;
-      }
-
-      void runSearch(current, id);
-    }, DEBOUNCE_MS);
-  }
-
-  input.addEventListener("input", onInput);
   input.addEventListener("keydown", (event) => {
     if (event.key === "ArrowDown") {
       event.preventDefault();
@@ -245,7 +184,7 @@ export function mountSearchBar(root: HTMLElement, options: SearchBarOptions): vo
     }
     if (event.key === "Escape" && !list.hidden) {
       event.preventDefault();
-      invalidate();
+      timing.cancel();
       hideList();
       status.hidden = true;
     }
