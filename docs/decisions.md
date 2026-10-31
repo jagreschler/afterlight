@@ -13,3 +13,15 @@ Analysis, file writing, and the zip all happen in the browser. There is no app s
 ## 2026-10-31 — GitHub Pages
 
 The built site is a GitHub Pages project site at `/afterlight/`. Vite's `base` is that path so asset URLs resolve. A workflow deploys on push to `main`. Pages must use the **GitHub Actions** source in the repository settings before that workflow can publish.
+
+## 2026-10-31 — Don't search on every keystroke
+
+The search box waits 300 ms after typing stops, and it does not ask iTunes until the query is at least 2 characters. A request on every letter would spam iTunes.
+
+## 2026-10-31 — One boundary for the music catalog
+
+`src/itunes.ts` is the only module that knows about Apple. The rest of the app sees a song: track name, artist, artwork URL, 30-second preview URL, and track id.
+
+## 2026-10-31 — Shows are 30 seconds
+
+A show uses the iTunes 30-second preview. Uploaded audio, when that exists, will be trimmed to 30 seconds. Longer shows get boring.

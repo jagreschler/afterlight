@@ -1,9 +1,128 @@
 body {
-  margin: 2rem;
+  margin: 0;
   font-family: system-ui, sans-serif;
   line-height: 1.5;
+  color: #1c1c1c;
+  background: #f6f5f2;
+}
+
+main {
+  max-width: 36rem;
+  padding: 2rem 1.25rem;
 }
 
 h1 {
-  margin-bottom: 0.25rem;
+  margin: 0 0 0.25rem;
+}
+
+.search {
+  margin-top: 1.5rem;
+}
+
+.search label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.search input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid #c8c4bc;
+  border-radius: 6px;
+  background: #fff;
+  font: inherit;
+}
+
+.search input:focus-visible,
+.results button:focus-visible {
+  outline: 2px solid #1c1c1c;
+  outline-offset: 2px;
+}
+
+.results {
+  margin: 0.35rem 0 0;
+  padding: 0.25rem;
+  list-style: none;
+  border: 1px solid #c8c4bc;
+  border-radius: 6px;
+  background: #fff;
+  max-height: 18rem;
+  overflow: auto;
+}
+
+.results[hidden] {
+  display: none;
+}
+
+.results li {
+  margin: 0;
+}
+
+.results button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.4rem;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.results button:hover,
+.results [aria-selected="true"] {
+  background: #eeeae3;
+}
+
+.results img,
+.choice img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 4px;
+  background: #eeeae3;
+}
+
+.option-title,
+.option-artist {
+  display: block;
+}
+
+.option-artist,
+.choice-artist,
+.status {
+  color: #5c5852;
+  font-size: 0.9rem;
+}
+
+.status {
+  margin: 0.35rem 0 0;
+}
+
+.status[hidden] {
+  display: none;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.choice[hidden] {
+  display: none;
+}
+
+.choice p {
+  margin: 0;
+}
+
+.choice-title {
+  font-weight: 600;
 }
