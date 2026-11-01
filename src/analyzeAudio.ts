@@ -6,7 +6,7 @@ import { resample } from "./resample";
 // One light frame every 20 ms. The preview is measured on that grid
 // before anything plays, then the player can run in time with it.
 const FRAMES_PER_SECOND = 50;
-const SAMPLE_RATE = 44100;
+export const SAMPLE_RATE = 44100;
 const WINDOW_SIZE = 2048;
 const HOP_SIZE = SAMPLE_RATE / FRAMES_PER_SECOND;
 

@@ -1,15 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { analyzeAudio, type AudioFrame } from "./analyzeAudio";
+import { analyzeAudio, SAMPLE_RATE as productionSampleRate, type AudioFrame } from "./analyzeAudio";
+
+const SAMPLE_RATE = 44100;
 
 describe("analyzeAudio", () => {
+  it("analyzes at 44.1 kHz", () => {
+    expect(productionSampleRate).toBe(44100);
+  });
+
   it("puts a low sine in the bass, a middle sine in the mids, and a high sine in the treble", () => {
-    expectBand(analyzeAudio(sine(100, 44100, 1), 44100).frames, "bass");
-    expectBand(analyzeAudio(sine(1000, 44100, 1), 44100).frames, "mids");
-    expectBand(analyzeAudio(sine(5000, 44100, 1), 44100).frames, "treble");
+    expectBand(analyzeAudio(sine(100, SAMPLE_RATE, 1), SAMPLE_RATE).frames, "bass");
+    expectBand(analyzeAudio(sine(1000, SAMPLE_RATE, 1), SAMPLE_RATE).frames, "mids");
+    expectBand(analyzeAudio(sine(5000, SAMPLE_RATE, 1), SAMPLE_RATE).frames, "treble");
   });
 
   it("keeps every band between 0 and 1", () => {
-    const { frames } = analyzeAudio(sine(1000, 44100, 1), 44100);
+    const { frames } = analyzeAudio(sine(1000, SAMPLE_RATE, 1), SAMPLE_RATE);
 
     for (const frame of frames) {
       expect(frame.bass).toBeGreaterThanOrEqual(0);
@@ -22,7 +28,7 @@ describe("analyzeAudio", () => {
   });
 
   it("measures one frame every 20 ms", () => {
-    const { frameRate, frames } = analyzeAudio(sine(100, 44100, 1), 44100);
+    const { frameRate, frames } = analyzeAudio(sine(100, SAMPLE_RATE, 1), SAMPLE_RATE);
 
     expect(frameRate).toBe(50);
     expect(frames).toHaveLength(50);
@@ -36,7 +42,7 @@ describe("analyzeAudio", () => {
 
   it("finds clicks at the times they happen", () => {
     const clicksAt = [0.4, 0.9, 1.4];
-    const { onsetTimes } = analyzeAudio(clicks(clicksAt, 44100, 2), 44100);
+    const { onsetTimes } = analyzeAudio(clicks(clicksAt, SAMPLE_RATE, 2), SAMPLE_RATE);
 
     expect(onsetTimes).toHaveLength(clicksAt.length);
     for (const time of clicksAt) {
@@ -45,7 +51,7 @@ describe("analyzeAudio", () => {
   });
 
   it("reports no energy and no beats for silence", () => {
-    const { frames, onsetTimes } = analyzeAudio(new Float32Array(44100), 44100);
+    const { frames, onsetTimes } = analyzeAudio(new Float32Array(SAMPLE_RATE), SAMPLE_RATE);
 
     expect(onsetTimes).toEqual([]);
     expect(frames.every((frame) => frame.bass === 0 && frame.mids === 0 && frame.treble === 0)).toBe(

@@ -2,14 +2,16 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { analyzeAudio } from "./analyzeAudio";
 import { analyzePreview } from "./analyzePreview";
 
+const SAMPLE_RATE = 44100;
+
 afterEach(() => {
   vi.unstubAllGlobals();
 });
 
 describe("analyzePreview", () => {
   it("downloads the preview and analyzes the decoded samples", async () => {
-    const samples = sine(100, 44100, 1);
-    const decode = vi.fn(async () => ({ samples, sampleRate: 44100 }));
+    const samples = sine(100, SAMPLE_RATE, 1);
+    const decode = vi.fn(async () => ({ samples, sampleRate: SAMPLE_RATE }));
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => new Response(new Uint8Array([1, 2, 3, 4]), { status: 200 })),
@@ -20,7 +22,7 @@ describe("analyzePreview", () => {
     expect(fetch).toHaveBeenCalledWith("https://example.com/preview.m4a");
     expect(decode).toHaveBeenCalledOnce();
     expect(analysis.frames.map((frame) => frame.bass)).toEqual(
-      analyzeAudio(samples, 44100).frames.map((frame) => frame.bass),
+      analyzeAudio(samples, SAMPLE_RATE).frames.map((frame) => frame.bass),
     );
     expect(mean(analysis.frames.map((frame) => frame.bass))).toBeGreaterThan(
       mean(analysis.frames.map((frame) => frame.mids)) * 3,
