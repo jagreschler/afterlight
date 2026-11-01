@@ -25,3 +25,7 @@ The search box waits 300 ms after typing stops, and it does not ask iTunes until
 ## 2026-10-31 — Shows are 30 seconds
 
 A show uses the iTunes 30-second preview. Uploaded audio, when that exists, will be trimmed to 30 seconds. Longer shows get boring.
+
+## 2026-11-01 — The preview player is separate from the song card
+
+Play and pause live in their own player, not on the song card. That player wraps one audio element and reports the playhead and the end of the clip. A later light show can listen to those same events and stay in sync with the preview.

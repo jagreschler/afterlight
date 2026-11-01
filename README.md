@@ -2,7 +2,7 @@
 
 Afterlight is a browser-only Tesla light show generator. You pick a song, the app analyzes it in the browser, and it writes a Tesla-compatible `.fseq` file plus a matching WAV, zipped for a USB stick.
 
-The original app was React on TanStack Start. This rebuild uses Vite and plain TypeScript so the code stays small enough to read line by line. The home page can search the iTunes catalog. Analysis and export are not built yet.
+The original app was React on TanStack Start. This rebuild uses Vite and plain TypeScript so the code stays small enough to read line by line. The home page can search the iTunes catalog and play a 30-second preview. Analysis and export are not built yet.
 
 ## Requirements
 
