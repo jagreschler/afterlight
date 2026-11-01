@@ -29,3 +29,7 @@ A show uses the iTunes 30-second preview. Uploaded audio, when that exists, will
 ## 2026-11-01 — The preview player is separate from the song card
 
 Play and pause live in their own player, not on the song card. That player wraps one audio element and reports the playhead and the end of the clip. A later light show can listen to those same events and stay in sync with the preview.
+
+## 2026-11-01 — Analyze the preview up front, for pulse first
+
+The 30-second preview is analyzed once, before playback, not from a live microphone. The result is 50 frames per second (one every 20 ms): bass, mids, and treble, plus the times of the beats. Pulse, lights flashing on those beats, is the first style. The others can wait.
