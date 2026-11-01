@@ -33,3 +33,11 @@ Play and pause live in their own player, not on the song card. That player wraps
 ## 2026-11-01 — Analyze the preview up front, for pulse first
 
 The 30-second preview is analyzed once, before playback, not from a live microphone. The result is 50 frames per second (one every 20 ms): bass, mids, and treble, plus the times of the beats. Pulse, lights flashing on those beats, is the first style. The others can wait.
+
+## 2026-11-01 — Pulse flashes mapped lights, then lets them fade
+
+Pulse writes one row of 200 channel levels (0–255) per analysis frame. Together mode flashes every mapped light on a beat. Split mode, the default, flashes headlights on a bass beat and turn signals on a treble beat. The lit channels then decay.
+
+Model 3 and Model Y use that same 200-channel file. Tesla's guide (teslamotors/light-show) says one show plays on every supported car, and the xLights project authors it on the "Model S" controller with MaxChannels 200. Headlights are xLights 1–4 (left and right outer and inner main beams). Turn signals are xLights 13–14 in front and 23–24 in the rear. The grid index is the xLights number minus 1.
+
+On Model 3/Y, xLights 7–12 (channels 4, 5, and 6) share one bulb, and aux park plus side markers (xLights 17–20) share another. Model 3 Standard Range+ has no front fog and no aux park. Pulse does not drive those. Outer main beam ramps on a reflector lamp and is on/off on a projector lamp, so the fade still needs a look on Jason's cars.
