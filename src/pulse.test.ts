@@ -8,8 +8,17 @@ const BEAT_FRAME = 10;
 const BEAT_TIME = BEAT_FRAME / FRAME_RATE;
 const OFF = 0;
 const UNUSED_CHANNEL = CHANNEL_COUNT - 1;
+const XLIGHTS_CHANNEL_COUNT = 200;
+const XLIGHTS_HEADLIGHTS = [1, 2, 3, 4];
+const XLIGHTS_TURN_SIGNALS = [13, 14, 23, 24];
 
 describe("choreographPulse", () => {
+  it("uses the Model 3/Y headlights and turn signals in the shared 200-channel file", () => {
+    expect(CHANNEL_COUNT).toBe(XLIGHTS_CHANNEL_COUNT);
+    expect([...HEADLIGHTS]).toEqual(gridIndexes(XLIGHTS_HEADLIGHTS));
+    expect([...TURN_SIGNALS]).toEqual(gridIndexes(XLIGHTS_TURN_SIGNALS));
+  });
+
   it("flashes the headlights on a bass beat and leaves the other channels off", () => {
     const grid = choreographPulse(show({ bass: 1, mids: 0, treble: 0 }));
 
@@ -80,4 +89,8 @@ function levels(grid: Uint8Array[], frame: number, channels: readonly number[]):
 
 function filled(channels: readonly number[], value: number): number[] {
   return channels.map(() => value);
+}
+
+function gridIndexes(xlightsChannels: readonly number[]): number[] {
+  return xlightsChannels.map((channel) => channel - 1);
 }

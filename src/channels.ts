@@ -1,5 +1,11 @@
-// Tesla xLights model "Model S" from github.com/teslamotors/light-show.
-// xLights numbers channels from 1. The light grid numbers them from 0.
+// Model 3 and Model Y play the same 200-channel FSEQ as the other Teslas.
+// teslamotors/light-show authors that file on the xLights "Model S" controller
+// (MaxChannels 200). xLights counts from 1. This grid counts from 0.
+//
+// Headlights and turn signals are separate left/right outputs on 3/Y.
+// These are not, so pulse does not use them: xLights 7–12 (channels 4–6)
+// share one bulb, and xLights 17–20 (aux park and side markers) share another.
+// Model 3 Standard Range+ has no front fog (xLights 15–16) and no aux park.
 export const CHANNEL_COUNT = 200;
 
 function xlights(channelNumber: number): number {
