@@ -33,3 +33,9 @@ Play and pause live in their own player, not on the song card. That player wraps
 ## 2026-11-01 — Analyze the preview up front, for pulse first
 
 The 30-second preview is analyzed once, before playback, not from a live microphone. The result is 50 frames per second (one every 20 ms): bass, mids, and treble, plus the times of the beats. Pulse, lights flashing on those beats, is the first style. The others can wait.
+
+## 2026-11-01 — Pulse flashes mapped lights, then lets them fade
+
+Pulse writes one row of 200 channel levels (0–255) per analysis frame. Together mode flashes every mapped light on a beat. Split mode, the default, flashes headlights on a bass beat and turn signals on a treble beat. The lit channels then decay.
+
+Those channel numbers come from Tesla's xLights model in teslamotors/light-show (the Model S controller). xLights counts from 1 and the grid counts from 0. Some cars tie several of those channels to one bulb, so the map still needs a check on a real vehicle.
