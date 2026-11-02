@@ -41,3 +41,7 @@ Pulse writes one row of 200 channel levels (0–255) per analysis frame. Togethe
 Model 3 and Model Y use that same 200-channel file. Tesla's guide (teslamotors/light-show) says one show plays on every supported car, and the xLights project authors it on the "Model S" controller with MaxChannels 200. Headlights are xLights 1–4 (left and right outer and inner main beams). Turn signals are xLights 13–14 in front and 23–24 in the rear. The grid index is the xLights number minus 1.
 
 On Model 3/Y, xLights 7–12 (channels 4, 5, and 6) share one bulb, and aux park plus side markers (xLights 17–20) share another. Model 3 Standard Range+ has no front fog and no aux park. Pulse does not drive those. Outer main beam ramps on a reflector lamp and is on/off on a projector lamp, so the fade still needs a look on Jason's cars.
+
+## 2026-11-02 — Pulse mode is two buttons
+
+Split and Together are separate buttons, not a switch, so both choices stay on screen. Split starts selected. The layout is mobile-first: it fits a phone and stays comfortable on a wide desktop. The page is mostly black with light text, and the selected button and focus rings are red, in the spirit of the Roadster display.
