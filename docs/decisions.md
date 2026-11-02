@@ -46,6 +46,6 @@ On Model 3/Y, xLights 7–12 (channels 4, 5, and 6) share one bulb, and aux park
 
 Split and Together are separate buttons, not a switch, so both choices stay on screen. Split starts selected. The layout is mobile-first: it fits a phone and stays comfortable on a wide desktop. The page is mostly black with light text, and the selected button and focus rings are red, in the spirit of the Roadster display.
 
-## 2026-11-02 — Confirm the song before choosing a style
+## 2026-11-02 — One click generates, after the song is chosen
 
-Search is the first control, and the preview player sits under it. Generate Light Show appears only after a song is chosen, below the player. Split and Together stay hidden until that click, and choosing another song hides them again. Analysis and the light-show files run only after the user confirms the song. The button only reveals the style for now.
+Before a song is picked, the page is only the search box. After a song is picked, the preview sits under the search, then a quiet Light style choice (Split or Together), then one red Generate Light Show button. That click is the single action to generate: it reports the chosen style and the song. The style stays visible if the user picks a different song, and their choice stays put. Analysis and the light-show files run only after that confirmation, which is a later step. The options are visible but easy to ignore, so there is no extra reveal click.

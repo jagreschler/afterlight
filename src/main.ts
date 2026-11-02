@@ -37,6 +37,6 @@ mountSearchBar(searchRoot, {
   onSelect(song) {
     card.show(song);
     preview.load(song.previewUrl);
-    flow.songSelected();
+    flow.songSelected(song);
   },
 });

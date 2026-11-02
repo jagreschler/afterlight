@@ -72,6 +72,7 @@ h1 {
   margin-top: 1rem;
 }
 
+.generate[hidden],
 .generate-button[hidden] {
   display: none;
 }

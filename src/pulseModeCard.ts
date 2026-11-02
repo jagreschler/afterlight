@@ -7,11 +7,11 @@ export class PulseModeCard {
   constructor(root: HTMLElement) {
     root.classList.add("pulse-mode");
     root.setAttribute("role", "group");
-    root.setAttribute("aria-label", "Pulse");
+    root.setAttribute("aria-label", "Light style");
 
     const label = document.createElement("p");
     label.className = "pulse-mode-label";
-    label.textContent = "Pulse";
+    label.textContent = "Light style";
 
     const options = document.createElement("div");
     options.className = "pulse-mode-options";

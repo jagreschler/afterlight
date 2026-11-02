@@ -34,15 +34,6 @@ export class PulseModePicker {
     this.root.hidden = false;
   }
 
-  hide(): void {
-    this.root.hidden = true;
-  }
-
-  reset(): void {
-    this.selected = DEFAULT_MODE;
-    this.card.setSelected(this.selected);
-  }
-
   private choose(mode: PulseMode): void {
     if (mode === this.selected) {
       return;

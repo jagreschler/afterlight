@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import type { Song } from "./itunes";
 import { mountPulseModePicker } from "./pulseModePicker";
 import { mountShowFlow, ShowFlow } from "./showFlow";
 
@@ -6,58 +7,66 @@ const GENERATE_LABEL = "Generate Light Show";
 const HIDDEN = true;
 const SHOWN = false;
 const SPLIT = "split";
-const NOTIFIED = 1;
+const TOGETHER = "together";
+const TOGETHER_LABEL = "Together";
+const FIRST_TITLE = "Get Lucky";
+const SECOND_TITLE = "One More Time";
 
 afterEach(() => {
   document.body.replaceChildren();
 });
 
 describe("show flow", () => {
-  it("hides Generate until a song is selected", () => {
+  it("hides the style and Generate until a song is selected", () => {
     const view = mount();
 
-    expect(view.generate.hidden).toBe(HIDDEN);
-    view.flow.songSelected();
-    expect(view.generate.hidden).toBe(SHOWN);
-  });
-
-  it("keeps the pulse picker hidden until Generate is clicked", () => {
-    const view = mount();
-    const seen: number[] = [];
-    view.flow.onGenerate(() => {
-      seen.push(NOTIFIED);
-    });
-    view.flow.onGenerate(() => {
-      seen.push(NOTIFIED);
-    });
-
-    expect(view.pickerRoot.hidden).toBe(HIDDEN);
-    view.flow.songSelected();
+    expect(view.generateRoot.hidden).toBe(HIDDEN);
     expect(view.pickerRoot.hidden).toBe(HIDDEN);
 
-    view.generate.click();
+    view.flow.songSelected(song(FIRST_TITLE));
 
+    expect(view.generateRoot.hidden).toBe(SHOWN);
     expect(view.pickerRoot.hidden).toBe(SHOWN);
     expect(view.picker.mode).toBe(SPLIT);
-    expect(seen).toEqual([NOTIFIED, NOTIFIED]);
   });
 
-  it("hides the picker again when a new song is chosen", () => {
+  it("tells every listener the selected mode and the song", () => {
+    const view = mount();
+    const chosen = song(FIRST_TITLE);
+    const seen: Array<{ mode: string; title: string }> = [];
+    view.flow.onGenerate((mode, picked) => {
+      seen.push({ mode: mode, title: picked.trackName });
+    });
+    view.flow.onGenerate((mode, picked) => {
+      seen.push({ mode: mode, title: picked.trackName });
+    });
+
+    view.flow.songSelected(chosen);
+    buttonNamed(view.pickerRoot, TOGETHER_LABEL).click();
+    view.generate.click();
+
+    const notice = { mode: TOGETHER, title: FIRST_TITLE };
+    expect(seen).toEqual([notice, notice]);
+    expect(view.picker.mode).toBe(TOGETHER);
+  });
+
+  it("keeps the style visible and the chosen mode when the song changes", () => {
     const view = mount();
 
-    view.flow.songSelected();
-    view.generate.click();
-    view.flow.songSelected();
+    view.flow.songSelected(song(FIRST_TITLE));
+    buttonNamed(view.pickerRoot, TOGETHER_LABEL).click();
+    view.flow.songSelected(song(SECOND_TITLE));
 
-    expect(view.pickerRoot.hidden).toBe(HIDDEN);
-    expect(view.generate.hidden).toBe(SHOWN);
-    expect(view.picker.mode).toBe(SPLIT);
+    expect(view.pickerRoot.hidden).toBe(SHOWN);
+    expect(view.generateRoot.hidden).toBe(SHOWN);
+    expect(view.picker.mode).toBe(TOGETHER);
   });
 });
 
 function mount(): {
   flow: ShowFlow;
   generate: HTMLButtonElement;
+  generateRoot: HTMLElement;
   pickerRoot: HTMLElement;
   picker: ReturnType<typeof mountPulseModePicker>;
 } {
@@ -70,6 +79,7 @@ function mount(): {
   return {
     flow: flow,
     generate: generate,
+    generateRoot: generateRoot,
     pickerRoot: pickerRoot,
     picker: picker,
   };
@@ -83,4 +93,14 @@ function buttonNamed(root: ParentNode, label: string): HTMLButtonElement {
     }
   }
   throw new Error(`missing ${label} button`);
+}
+
+function song(title: string): Song {
+  return {
+    trackId: title.length,
+    trackName: title,
+    artistName: "Daft Punk",
+    artworkUrl: "https://example.com/art.jpg",
+    previewUrl: "https://example.com/preview.m4a",
+  };
 }
