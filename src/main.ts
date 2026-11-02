@@ -2,13 +2,18 @@ import { searchSongs } from "./itunes";
 import { mountPreviewPlayer } from "./previewPlayer";
 import { mountPulseModePicker } from "./pulseModePicker";
 import { mountSearchBar } from "./searchBar";
+import { mountShowFlow } from "./showFlow";
 import { mountSongCard } from "./songCard";
 
-const modeRoot = document.querySelector("#pulse-mode");
 const searchRoot = document.querySelector("#search");
 const cardRoot = document.querySelector("#selected-song");
 const previewRoot = document.querySelector("#preview");
+const generateRoot = document.querySelector("#generate");
+const modeRoot = document.querySelector("#pulse-mode");
 
+if (!(generateRoot instanceof HTMLElement)) {
+  throw new Error("Afterlight is missing its #generate element.");
+}
 if (!(modeRoot instanceof HTMLElement)) {
   throw new Error("Afterlight is missing its #pulse-mode element.");
 }
@@ -22,7 +27,8 @@ if (!(previewRoot instanceof HTMLElement)) {
   throw new Error("Afterlight is missing its #preview element.");
 }
 
-mountPulseModePicker(modeRoot);
+const picker = mountPulseModePicker(modeRoot);
+const flow = mountShowFlow(generateRoot, picker);
 const card = mountSongCard(cardRoot);
 const preview = mountPreviewPlayer(previewRoot);
 
@@ -31,5 +37,6 @@ mountSearchBar(searchRoot, {
   onSelect(song) {
     card.show(song);
     preview.load(song.previewUrl);
+    flow.songSelected();
   },
 });

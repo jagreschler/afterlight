@@ -32,12 +32,17 @@ h1 {
 }
 
 .pulse-mode {
-  margin-top: 1.5rem;
+  margin-top: 0.75rem;
+}
+
+.pulse-mode[hidden] {
+  display: none;
 }
 
 .pulse-mode-label {
   margin: 0 0 0.4rem;
-  font-size: 0.9rem;
+  color: var(--muted);
+  font-size: 0.85rem;
 }
 
 .pulse-mode-options {
@@ -51,19 +56,40 @@ h1 {
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: var(--panel);
-  color: var(--text);
+  background: transparent;
+  color: var(--muted);
   font: inherit;
   cursor: pointer;
 }
 
 .pulse-mode button[aria-pressed="true"] {
   border-color: var(--red);
+  background: transparent;
+  color: var(--text);
+}
+
+.generate {
+  margin-top: 1rem;
+}
+
+.generate-button[hidden] {
+  display: none;
+}
+
+.generate-button {
+  width: 100%;
+  min-height: var(--tap);
+  border: 0;
+  border-radius: 6px;
   background: var(--red);
   color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .pulse-mode button:focus-visible,
+.generate-button:focus-visible,
 .search input:focus-visible,
 .results button:focus-visible,
 .preview button:focus-visible {

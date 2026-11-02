@@ -7,8 +7,11 @@ export class PulseModePicker {
   private selected: PulseMode = DEFAULT_MODE;
   private readonly changeHooks: Array<(mode: PulseMode) => void> = [];
   private readonly card: PulseModeCard;
+  private readonly root: HTMLElement;
 
   constructor(root: HTMLElement) {
+    this.root = root;
+    this.root.hidden = true;
     this.card = new PulseModeCard(root);
     this.card.setSelected(this.selected);
     this.card.splitButton.addEventListener("click", () => {
@@ -25,6 +28,19 @@ export class PulseModePicker {
 
   onChange(hook: (mode: PulseMode) => void): void {
     this.changeHooks.push(hook);
+  }
+
+  show(): void {
+    this.root.hidden = false;
+  }
+
+  hide(): void {
+    this.root.hidden = true;
+  }
+
+  reset(): void {
+    this.selected = DEFAULT_MODE;
+    this.card.setSelected(this.selected);
   }
 
   private choose(mode: PulseMode): void {
