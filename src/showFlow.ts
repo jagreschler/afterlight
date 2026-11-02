@@ -1,19 +1,19 @@
 import type { Song } from "./itunes";
 import type { PulseMode } from "./pulse";
 import { GenerateShowCard } from "./generateShowCard";
-import type { PulseModePicker } from "./pulseModePicker";
 
 type GenerateHook = (mode: PulseMode, song: Song) => void;
+
+const SPLIT: PulseMode = "split";
+const TOGETHER: PulseMode = "together";
 
 export class ShowFlow {
   private readonly generateHooks: GenerateHook[] = [];
   private readonly card: GenerateShowCard;
-  private readonly picker: PulseModePicker;
   private song: Song | null = null;
 
-  constructor(generateRoot: HTMLElement, picker: PulseModePicker) {
-    this.picker = picker;
-    this.card = new GenerateShowCard(generateRoot);
+  constructor(root: HTMLElement) {
+    this.card = new GenerateShowCard(root);
     this.card.button.addEventListener("click", () => {
       this.notify();
     });
@@ -22,7 +22,6 @@ export class ShowFlow {
   songSelected(song: Song): void {
     this.song = song;
     this.card.show();
-    this.picker.show();
   }
 
   onGenerate(hook: GenerateHook): void {
@@ -34,13 +33,20 @@ export class ShowFlow {
     if (song === null) {
       return;
     }
-    const mode = this.picker.mode;
+    const mode = modeFromSync(this.card.sync.checked);
     for (const hook of this.generateHooks) {
       hook(mode, song);
     }
   }
 }
 
-export function mountShowFlow(generateRoot: HTMLElement, picker: PulseModePicker): ShowFlow {
-  return new ShowFlow(generateRoot, picker);
+export function mountShowFlow(root: HTMLElement): ShowFlow {
+  return new ShowFlow(root);
+}
+
+function modeFromSync(checked: boolean): PulseMode {
+  if (checked) {
+    return TOGETHER;
+  }
+  return SPLIT;
 }

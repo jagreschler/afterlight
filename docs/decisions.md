@@ -48,4 +48,6 @@ Split and Together are separate buttons, not a switch, so both choices stay on s
 
 ## 2026-11-02 — One click generates, after the song is chosen
 
-Before a song is picked, the page is only the search box. After a song is picked, the preview sits under the search, then a quiet Light style choice (Split or Together), then one red Generate Light Show button. That click is the single action to generate: it reports the chosen style and the song. The style stays visible if the user picks a different song, and their choice stays put. Analysis and the light-show files run only after that confirmation, which is a later step. The options are visible but easy to ignore, so there is no extra reveal click.
+Before a song is picked, the page is only the search box. After a song is picked, the preview sits under the search, then one row: a "Sync all lights" checkbox and a compact "Generate & Download" button. Unchecked means split; checked means together. The label stays fixed, which is clearer than buttons whose names change. The choice stays if the user picks another song.
+
+That click is the single generate action. It reports the style and the song. Later, the button will disable and show progress text, then the browser will download a zip of lightshow.fseq, lightshow.wav, and a short USB note. Analysis and that download are not built yet.

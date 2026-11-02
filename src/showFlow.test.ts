@@ -1,36 +1,34 @@
 import { afterEach, describe, expect, it } from "vitest";
 import type { Song } from "./itunes";
-import { mountPulseModePicker } from "./pulseModePicker";
 import { mountShowFlow, ShowFlow } from "./showFlow";
 
-const GENERATE_LABEL = "Generate Light Show";
+const GENERATE_LABEL = "Generate & Download";
+const SYNC_LABEL = "Sync all lights";
 const HIDDEN = true;
 const SHOWN = false;
+const UNCHECKED = false;
+const CHECKED = true;
 const SPLIT = "split";
 const TOGETHER = "together";
-const TOGETHER_LABEL = "Together";
 const FIRST_TITLE = "Get Lucky";
-const SECOND_TITLE = "One More Time";
 
 afterEach(() => {
   document.body.replaceChildren();
 });
 
 describe("show flow", () => {
-  it("hides the style and Generate until a song is selected", () => {
+  it("hides the sync checkbox and Generate until a song is selected", () => {
     const view = mount();
 
-    expect(view.generateRoot.hidden).toBe(HIDDEN);
-    expect(view.pickerRoot.hidden).toBe(HIDDEN);
+    expect(view.root.hidden).toBe(HIDDEN);
 
     view.flow.songSelected(song(FIRST_TITLE));
 
-    expect(view.generateRoot.hidden).toBe(SHOWN);
-    expect(view.pickerRoot.hidden).toBe(SHOWN);
-    expect(view.picker.mode).toBe(SPLIT);
+    expect(view.root.hidden).toBe(SHOWN);
+    expect(view.sync.checked).toBe(UNCHECKED);
   });
 
-  it("tells every listener the selected mode and the song", () => {
+  it("passes split when sync is off and together when it is checked", () => {
     const view = mount();
     const chosen = song(FIRST_TITLE);
     const seen: Array<{ mode: string; title: string }> = [];
@@ -42,46 +40,36 @@ describe("show flow", () => {
     });
 
     view.flow.songSelected(chosen);
-    buttonNamed(view.pickerRoot, TOGETHER_LABEL).click();
     view.generate.click();
 
-    const notice = { mode: TOGETHER, title: FIRST_TITLE };
-    expect(seen).toEqual([notice, notice]);
-    expect(view.picker.mode).toBe(TOGETHER);
-  });
+    const splitNotice = { mode: SPLIT, title: FIRST_TITLE };
+    expect(seen).toEqual([splitNotice, splitNotice]);
 
-  it("keeps the style visible and the chosen mode when the song changes", () => {
-    const view = mount();
+    view.sync.click();
+    expect(view.sync.checked).toBe(CHECKED);
+    view.generate.click();
 
-    view.flow.songSelected(song(FIRST_TITLE));
-    buttonNamed(view.pickerRoot, TOGETHER_LABEL).click();
-    view.flow.songSelected(song(SECOND_TITLE));
-
-    expect(view.pickerRoot.hidden).toBe(SHOWN);
-    expect(view.generateRoot.hidden).toBe(SHOWN);
-    expect(view.picker.mode).toBe(TOGETHER);
+    const togetherNotice = { mode: TOGETHER, title: FIRST_TITLE };
+    expect(seen).toEqual([splitNotice, splitNotice, togetherNotice, togetherNotice]);
   });
 });
 
 function mount(): {
   flow: ShowFlow;
+  root: HTMLElement;
   generate: HTMLButtonElement;
-  generateRoot: HTMLElement;
-  pickerRoot: HTMLElement;
-  picker: ReturnType<typeof mountPulseModePicker>;
+  sync: HTMLInputElement;
 } {
-  const generateRoot = document.createElement("div");
-  const pickerRoot = document.createElement("div");
-  document.body.append(generateRoot, pickerRoot);
-  const picker = mountPulseModePicker(pickerRoot);
-  const flow = mountShowFlow(generateRoot, picker);
-  const generate = buttonNamed(generateRoot, GENERATE_LABEL);
+  const root = document.createElement("div");
+  document.body.append(root);
+  const flow = mountShowFlow(root);
+  const generate = buttonNamed(root, GENERATE_LABEL);
+  const sync = syncBox(root);
   return {
     flow: flow,
+    root: root,
     generate: generate,
-    generateRoot: generateRoot,
-    pickerRoot: pickerRoot,
-    picker: picker,
+    sync: sync,
   };
 }
 
@@ -93,6 +81,19 @@ function buttonNamed(root: ParentNode, label: string): HTMLButtonElement {
     }
   }
   throw new Error(`missing ${label} button`);
+}
+
+function syncBox(root: ParentNode): HTMLInputElement {
+  const labels = root.querySelectorAll("label");
+  for (const label of labels) {
+    if (label.textContent === SYNC_LABEL) {
+      const input = label.querySelector("input");
+      if (input instanceof HTMLInputElement) {
+        return input;
+      }
+    }
+  }
+  throw new Error("missing sync checkbox");
 }
 
 function song(title: string): Song {
