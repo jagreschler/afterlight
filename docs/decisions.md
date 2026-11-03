@@ -42,12 +42,8 @@ Model 3 and Model Y use that same 200-channel file. Tesla's guide (teslamotors/l
 
 On Model 3/Y, xLights 7–12 (channels 4, 5, and 6) share one bulb, and aux park plus side markers (xLights 17–20) share another. Model 3 Standard Range+ has no front fog and no aux park. Pulse does not drive those. Outer main beam ramps on a reflector lamp and is on/off on a projector lamp, so the fade still needs a look on Jason's cars.
 
-## 2026-11-02 — Pulse mode is two buttons
-
-Split and Together are separate buttons, not a switch, so both choices stay on screen. Split starts selected. The layout is mobile-first: it fits a phone and stays comfortable on a wide desktop. The page is mostly black with light text, and the selected button and focus rings are red, in the spirit of the Roadster display.
-
 ## 2026-11-02 — One click generates, after the song is chosen
 
-Before a song is picked, the page is only the search box. After a song is picked, the preview sits under the search, then one row: a "Sync all lights" checkbox and a compact "Generate & Download" button. Unchecked means split; checked means together. The label stays fixed, which is clearer than buttons whose names change. The choice stays if the user picks another song.
+Before a song is picked, the page is only the search box. After a song is picked, the preview sits under the search, then one row: a "Sync all lights" checkbox and a compact "Generate & Download" button. Unchecked means split; checked means together. A checkbox with that fixed label replaced the earlier pair of Split and Together buttons. The choice stays if the user picks another song.
 
 That click is the single generate action. It reports the style and the song. Later, the button will disable and show progress text, then the browser will download a zip of lightshow.fseq, lightshow.wav, and a short USB note. Analysis and that download are not built yet.
