@@ -14,3 +14,7 @@ export function slugify(value: string): string {
 
   return slug;
 }
+
+export function showSlug(artist: string, song: string): string {
+  return slugify(`${artist} ${song}`);
+}

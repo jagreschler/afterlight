@@ -59,3 +59,7 @@ Clicking Generate & Download analyzes the 30-second preview, then builds the pul
 ## 2026-11-03 — WAV writing is its own module
 
 `src/wavWriter.ts` turns float samples into a 16-bit PCM WAV file. Tesla accepts WAV, and uncompressed PCM has a length that matches the FSEQ frame for frame. It stays separate from the page. The download is still a later step.
+
+## 2026-11-03 — The USB package is a zip of three files
+
+`src/showPackage.ts` packs a `.fseq`, a `.wav`, and a short README into one zip. The two show files share a slug of the artist and song, such as `the-eagles-hotel-california.fseq`, because Tesla matches the file names and allows more than one show on a drive. The note tells you to format the stick as exFAT or FAT32, put both files in a root folder named LightShow, and start the show from Toybox. fflate builds the zip so we do not hand-write the format. The button does not download it yet.
