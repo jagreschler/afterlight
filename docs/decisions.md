@@ -51,3 +51,7 @@ That click is the single generate action. It reports the style and the song. Lat
 ## 2026-11-03 — Generate analyzes the preview, then builds the pulse grid
 
 Clicking Generate & Download analyzes the 30-second preview, then builds the pulse grid for split or together. The button stays disabled and reads "Analyzing song…", then "Building light show…", then returns to normal. If that fails, it shows a short error and can be clicked again. The grid stays in memory. The zip of lightshow.fseq, lightshow.wav, and a USB note is still a later step.
+
+## 2026-11-03 — FSEQ writing is its own module
+
+`src/fseqWriter.ts` turns a light grid into an uncompressed FSEQ 2.0 file. It is separate from the page so the format stays easy to check. Tesla's validator wants the magic `PSEQ`, version 2.0, 200 channels, a 20 ms step, and no compression. The page does not download the file yet.
