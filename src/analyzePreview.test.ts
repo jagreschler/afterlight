@@ -17,10 +17,13 @@ describe("analyzePreview", () => {
       vi.fn(async () => new Response(new Uint8Array([1, 2, 3, 4]), { status: 200 })),
     );
 
-    const analysis = await analyzePreview("https://example.com/preview.m4a", decode);
+    const prepared = await analyzePreview("https://example.com/preview.m4a", decode);
+    const analysis = prepared.analysis;
 
     expect(fetch).toHaveBeenCalledWith("https://example.com/preview.m4a");
     expect(decode).toHaveBeenCalledOnce();
+    expect(prepared.samples).toBe(samples);
+    expect(prepared.sampleRate).toBe(SAMPLE_RATE);
     expect(analysis.frames.map((frame) => frame.bass)).toEqual(
       analyzeAudio(samples, SAMPLE_RATE).frames.map((frame) => frame.bass),
     );

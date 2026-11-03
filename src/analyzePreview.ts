@@ -5,10 +5,16 @@ export type DecodedPreview = {
   sampleRate: number;
 };
 
+export type AnalyzedPreview = {
+  analysis: AudioAnalysis;
+  samples: Float32Array;
+  sampleRate: number;
+};
+
 export async function analyzePreview(
   url: string,
   decode: (bytes: ArrayBuffer) => Promise<DecodedPreview> = decodeWithWebAudio,
-): Promise<AudioAnalysis> {
+): Promise<AnalyzedPreview> {
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Could not download the preview (${response.status}).`);
@@ -16,7 +22,12 @@ export async function analyzePreview(
 
   const bytes = await response.arrayBuffer();
   const preview = await decode(bytes);
-  return analyzeAudio(preview.samples, preview.sampleRate);
+  const analysis = analyzeAudio(preview.samples, preview.sampleRate);
+  return {
+    analysis: analysis,
+    samples: preview.samples,
+    sampleRate: preview.sampleRate,
+  };
 }
 
 async function decodeWithWebAudio(bytes: ArrayBuffer): Promise<DecodedPreview> {

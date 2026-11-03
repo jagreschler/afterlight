@@ -1,5 +1,7 @@
+import { unzipSync } from "fflate";
 import { afterEach, describe, expect, it } from "vitest";
 import type { AudioAnalysis } from "./analyzeAudio";
+import type { AnalyzedPreview } from "./analyzePreview";
 import type { Song } from "./itunes";
 import { mountShowFlow, ShowFlow } from "./showFlow";
 
@@ -18,6 +20,13 @@ const FAILED = "Couldn't build the light show.";
 const SAMPLE_RATE = 44100;
 const FRAME_RATE = 50;
 const ONE_FRAME = 1;
+const ARTIST = "Daft Punk";
+const SLUG = "daft-punk-get-lucky";
+const ZIP_NAME = `${SLUG}.zip`;
+const FSEQ_NAME = `${SLUG}.fseq`;
+const WAV_NAME = `${SLUG}.wav`;
+const NOTE_NAME = "README.txt";
+const PREVIEW_SAMPLES = new Float32Array([0, 0.25, -0.25]);
 
 afterEach(() => {
   document.body.replaceChildren();
@@ -36,7 +45,7 @@ describe("show flow", () => {
   });
 
   it("passes split when sync is off and together when it is checked", async () => {
-    const view = mount(async () => oneBeat());
+    const view = mount(async () => readyPreview());
     const chosen = song(FIRST_TITLE);
     const seen: Array<{ mode: string; title: string }> = [];
     view.flow.onGenerate((mode, picked) => {
@@ -63,7 +72,7 @@ describe("show flow", () => {
   });
 
   it("disables the button while analyzing, then while building, then enables it", async () => {
-    const pending = deferred<AudioAnalysis>();
+    const pending = deferred<AnalyzedPreview>();
     const view = mount(() => pending.promise);
     view.flow.songSelected(song(FIRST_TITLE));
 
@@ -72,7 +81,7 @@ describe("show flow", () => {
     expect(view.generate.disabled).toBe(true);
     expect(view.generate.textContent).toBe(ANALYZING);
 
-    pending.resolve(oneBeat());
+    pending.resolve(readyPreview());
     await Promise.resolve();
 
     expect(view.generate.disabled).toBe(true);
@@ -86,7 +95,7 @@ describe("show flow", () => {
   });
 
   it("shows an error and re-enables the button when the preview cannot be analyzed", async () => {
-    const pending = deferred<AudioAnalysis>();
+    const pending = deferred<AnalyzedPreview>();
     const view = mount(() => pending.promise);
     view.flow.songSelected(song(FIRST_TITLE));
 
@@ -98,9 +107,33 @@ describe("show flow", () => {
     expect(view.generate.textContent).toBe(FAILED);
     expect(view.flow.lightShow).toBeNull();
   });
+
+  it("downloads a zip of the slug-named show files", async () => {
+    const downloads: Array<{ name: string; bytes: Uint8Array }> = [];
+    const view = mount(async () => readyPreview(), (name, bytes) => {
+      downloads.push({ name: name, bytes: bytes });
+    });
+    view.flow.songSelected(song(FIRST_TITLE));
+
+    view.generate.click();
+    await settle();
+
+    expect(view.generate.disabled).toBe(false);
+    expect(view.generate.textContent).toBe(GENERATE_LABEL);
+    expect(downloads).toHaveLength(1);
+    const saved = downloads[0];
+    expect(saved?.name).toBe(ZIP_NAME);
+    const files = unzipSync(saved?.bytes ?? new Uint8Array());
+    expect(sortedNames(files)).toEqual([FSEQ_NAME, NOTE_NAME, WAV_NAME].sort());
+    expect(text(files[FSEQ_NAME], 0, 4)).toBe("PSEQ");
+    expect(text(files[WAV_NAME], 0, 4)).toBe("RIFF");
+  });
 });
 
-function mount(analyze?: (url: string) => Promise<AudioAnalysis>): {
+function mount(
+  analyze?: (url: string) => Promise<AnalyzedPreview>,
+  download?: (name: string, bytes: Uint8Array) => void,
+): {
   flow: ShowFlow;
   root: HTMLElement;
   generate: HTMLButtonElement;
@@ -108,7 +141,11 @@ function mount(analyze?: (url: string) => Promise<AudioAnalysis>): {
 } {
   const root = document.createElement("div");
   document.body.append(root);
-  const flow = analyze === undefined ? mountShowFlow(root) : mountShowFlow(root, analyze);
+  const flow = download === undefined
+    ? analyze === undefined
+      ? mountShowFlow(root)
+      : mountShowFlow(root, analyze)
+    : mountShowFlow(root, analyze ?? (async () => readyPreview()), download);
   const generate = buttonNamed(root, GENERATE_LABEL);
   const sync = syncBox(root);
   return {
@@ -182,11 +219,39 @@ function deferred<T>(): {
   };
 }
 
+function readyPreview(): AnalyzedPreview {
+  return {
+    analysis: oneBeat(),
+    samples: PREVIEW_SAMPLES,
+    sampleRate: SAMPLE_RATE,
+  };
+}
+
+function sortedNames(files: Record<string, Uint8Array>): string[] {
+  const names: string[] = [];
+  for (const name of Object.keys(files)) {
+    names.push(name);
+  }
+  names.sort();
+  return names;
+}
+
+function text(bytes: Uint8Array | undefined, start: number, length: number): string {
+  let result = "";
+  if (bytes === undefined) {
+    return result;
+  }
+  for (let index = 0; index < length; index += 1) {
+    result += String.fromCharCode(bytes[start + index] ?? 0);
+  }
+  return result;
+}
+
 function song(title: string): Song {
   return {
     trackId: title.length,
     trackName: title,
-    artistName: "Daft Punk",
+    artistName: ARTIST,
     artworkUrl: "https://example.com/art.jpg",
     previewUrl: "https://example.com/preview.m4a",
   };
