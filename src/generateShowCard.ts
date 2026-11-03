@@ -31,4 +31,19 @@ export class GenerateShowCard {
   show(): void {
     this.root.hidden = false;
   }
+
+  setBusy(message: string): void {
+    this.button.disabled = true;
+    this.button.textContent = message;
+  }
+
+  setReady(label: string): void {
+    this.button.disabled = false;
+    this.button.textContent = label;
+  }
+
+  setFailed(message: string): void {
+    this.button.disabled = false;
+    this.button.textContent = message;
+  }
 }
