@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import type { AudioAnalysis } from "./analyzeAudio";
 import type { Song } from "./itunes";
 import { mountShowFlow, ShowFlow } from "./showFlow";
 
@@ -11,6 +12,12 @@ const CHECKED = true;
 const SPLIT = "split";
 const TOGETHER = "together";
 const FIRST_TITLE = "Get Lucky";
+const ANALYZING = "Analyzing song…";
+const BUILDING = "Building light show…";
+const FAILED = "Couldn't build the light show.";
+const SAMPLE_RATE = 44100;
+const FRAME_RATE = 50;
+const ONE_FRAME = 1;
 
 afterEach(() => {
   document.body.replaceChildren();
@@ -28,8 +35,8 @@ describe("show flow", () => {
     expect(view.sync.checked).toBe(UNCHECKED);
   });
 
-  it("passes split when sync is off and together when it is checked", () => {
-    const view = mount();
+  it("passes split when sync is off and together when it is checked", async () => {
+    const view = mount(async () => oneBeat());
     const chosen = song(FIRST_TITLE);
     const seen: Array<{ mode: string; title: string }> = [];
     view.flow.onGenerate((mode, picked) => {
@@ -41,6 +48,7 @@ describe("show flow", () => {
 
     view.flow.songSelected(chosen);
     view.generate.click();
+    await settle();
 
     const splitNotice = { mode: SPLIT, title: FIRST_TITLE };
     expect(seen).toEqual([splitNotice, splitNotice]);
@@ -48,13 +56,51 @@ describe("show flow", () => {
     view.sync.click();
     expect(view.sync.checked).toBe(CHECKED);
     view.generate.click();
+    await settle();
 
     const togetherNotice = { mode: TOGETHER, title: FIRST_TITLE };
     expect(seen).toEqual([splitNotice, splitNotice, togetherNotice, togetherNotice]);
   });
+
+  it("disables the button while analyzing, then while building, then enables it", async () => {
+    const pending = deferred<AudioAnalysis>();
+    const view = mount(() => pending.promise);
+    view.flow.songSelected(song(FIRST_TITLE));
+
+    view.generate.click();
+
+    expect(view.generate.disabled).toBe(true);
+    expect(view.generate.textContent).toBe(ANALYZING);
+
+    pending.resolve(oneBeat());
+    await Promise.resolve();
+
+    expect(view.generate.disabled).toBe(true);
+    expect(view.generate.textContent).toBe(BUILDING);
+
+    await Promise.resolve();
+
+    expect(view.generate.disabled).toBe(false);
+    expect(view.generate.textContent).toBe(GENERATE_LABEL);
+    expect(view.flow.lightShow).toHaveLength(ONE_FRAME);
+  });
+
+  it("shows an error and re-enables the button when the preview cannot be analyzed", async () => {
+    const pending = deferred<AudioAnalysis>();
+    const view = mount(() => pending.promise);
+    view.flow.songSelected(song(FIRST_TITLE));
+
+    view.generate.click();
+    pending.reject(new Error("offline"));
+    await Promise.resolve();
+
+    expect(view.generate.disabled).toBe(false);
+    expect(view.generate.textContent).toBe(FAILED);
+    expect(view.flow.lightShow).toBeNull();
+  });
 });
 
-function mount(): {
+function mount(analyze?: (url: string) => Promise<AudioAnalysis>): {
   flow: ShowFlow;
   root: HTMLElement;
   generate: HTMLButtonElement;
@@ -62,7 +108,7 @@ function mount(): {
 } {
   const root = document.createElement("div");
   document.body.append(root);
-  const flow = mountShowFlow(root);
+  const flow = analyze === undefined ? mountShowFlow(root) : mountShowFlow(root, analyze);
   const generate = buttonNamed(root, GENERATE_LABEL);
   const sync = syncBox(root);
   return {
@@ -94,6 +140,46 @@ function syncBox(root: ParentNode): HTMLInputElement {
     }
   }
   throw new Error("missing sync checkbox");
+}
+
+async function settle(): Promise<void> {
+  await Promise.resolve();
+  await Promise.resolve();
+}
+
+function oneBeat(): AudioAnalysis {
+  return {
+    sampleRate: SAMPLE_RATE,
+    frameRate: FRAME_RATE,
+    frames: [{ time: 0, bass: 1, mids: 0, treble: 0 }],
+    onsetTimes: [0],
+  };
+}
+
+function deferred<T>(): {
+  promise: Promise<T>;
+  resolve: (value: T) => void;
+  reject: (error: Error) => void;
+} {
+  let resolvePromise: (value: T) => void = () => {
+    throw new Error("deferred promise resolved before it was created");
+  };
+  let rejectPromise: (error: Error) => void = () => {
+    throw new Error("deferred promise rejected before it was created");
+  };
+  const promise = new Promise<T>((resolve, reject) => {
+    resolvePromise = resolve;
+    rejectPromise = reject;
+  });
+  return {
+    promise: promise,
+    resolve: (value) => {
+      resolvePromise(value);
+    },
+    reject: (error) => {
+      rejectPromise(error);
+    },
+  };
 }
 
 function song(title: string): Song {
