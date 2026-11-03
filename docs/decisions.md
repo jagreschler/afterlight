@@ -55,3 +55,7 @@ Clicking Generate & Download analyzes the 30-second preview, then builds the pul
 ## 2026-11-03 — FSEQ writing is its own module
 
 `src/fseqWriter.ts` turns a light grid into an uncompressed FSEQ 2.0 file. It is separate from the page so the format stays easy to check. Tesla's validator wants the magic `PSEQ`, version 2.0, 200 channels, a 20 ms step, and no compression. The page does not download the file yet.
+
+## 2026-11-03 — WAV writing is its own module
+
+`src/wavWriter.ts` turns float samples into a 16-bit PCM WAV file. Tesla accepts WAV, and uncompressed PCM has a length that matches the FSEQ frame for frame. It stays separate from the page. The download is still a later step.
