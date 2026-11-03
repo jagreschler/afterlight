@@ -47,3 +47,7 @@ On Model 3/Y, xLights 7–12 (channels 4, 5, and 6) share one bulb, and aux park
 Before a song is picked, the page is only the search box. After a song is picked, the preview sits under the search, then one row: a "Sync all lights" checkbox and a compact "Generate & Download" button. Unchecked means split; checked means together. A checkbox with that fixed label replaced the earlier pair of Split and Together buttons. The choice stays if the user picks another song.
 
 That click is the single generate action. It reports the style and the song. Later, the button will disable and show progress text, then the browser will download a zip of lightshow.fseq, lightshow.wav, and a short USB note. Analysis and that download are not built yet.
+
+## 2026-11-03 — Generate analyzes the preview, then builds the pulse grid
+
+Clicking Generate & Download analyzes the 30-second preview, then builds the pulse grid for split or together. The button stays disabled and reads "Analyzing song…", then "Building light show…", then returns to normal. If that fails, it shows a short error and can be clicked again. The grid stays in memory. The zip of lightshow.fseq, lightshow.wav, and a USB note is still a later step.
