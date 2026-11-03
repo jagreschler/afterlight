@@ -3,6 +3,7 @@ import { analyzeAudio } from "./analyzeAudio";
 import { analyzePreview } from "./analyzePreview";
 
 const SAMPLE_RATE = 44100;
+const SAMPLE_URL = "https://example.com/preview.m4a";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -17,10 +18,10 @@ describe("analyzePreview", () => {
       vi.fn(async () => new Response(new Uint8Array([1, 2, 3, 4]), { status: 200 })),
     );
 
-    const prepared = await analyzePreview("https://example.com/preview.m4a", decode);
+    const prepared = await analyzePreview(SAMPLE_URL, decode);
     const analysis = prepared.analysis;
 
-    expect(fetch).toHaveBeenCalledWith("https://example.com/preview.m4a");
+    expect(fetch).toHaveBeenCalledWith(SAMPLE_URL);
     expect(decode).toHaveBeenCalledOnce();
     expect(prepared.samples).toBe(samples);
     expect(prepared.sampleRate).toBe(SAMPLE_RATE);

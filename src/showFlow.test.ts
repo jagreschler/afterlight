@@ -18,6 +18,7 @@ const ANALYZING = "Analyzing song…";
 const BUILDING = "Building light show…";
 const FAILED = "Couldn't build the light show.";
 const SAMPLE_RATE = 44100;
+const SAMPLE_URL = "https://example.com/preview.m4a";
 const FRAME_RATE = 50;
 const ONE_FRAME = 1;
 const ARTIST = "Daft Punk";
@@ -253,6 +254,6 @@ function song(title: string): Song {
     trackName: title,
     artistName: ARTIST,
     artworkUrl: "https://example.com/art.jpg",
-    previewUrl: "https://example.com/preview.m4a",
+    previewUrl: SAMPLE_URL,
   };
 }
