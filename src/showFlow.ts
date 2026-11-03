@@ -1,11 +1,16 @@
-import type { AudioAnalysis } from "./analyzeAudio";
-import { analyzePreview } from "./analyzePreview";
+import { analyzePreview, type AnalyzedPreview } from "./analyzePreview";
+import { downloadFile } from "./downloadFile";
 import type { Song } from "./itunes";
 import { choreographPulse, type PulseMode } from "./pulse";
+import { buildShowZip } from "./showPackage";
+import { showSlug } from "./slugify";
+import { writeFseq } from "./fseqWriter";
+import { writeWav } from "./wavWriter";
 import { GenerateShowCard } from "./generateShowCard";
 
 type GenerateHook = (mode: PulseMode, song: Song) => void;
-type AnalyzePreview = (url: string) => Promise<AudioAnalysis>;
+type AnalyzePreview = (url: string) => Promise<AnalyzedPreview>;
+type DownloadZip = (name: string, bytes: Uint8Array) => void;
 
 const SPLIT: PulseMode = "split";
 const TOGETHER: PulseMode = "together";
@@ -19,11 +24,17 @@ export class ShowFlow {
   private readonly generateHooks: GenerateHook[] = [];
   private readonly card: GenerateShowCard;
   private readonly analyze: AnalyzePreview;
+  private readonly download: DownloadZip;
   private song: Song | null = null;
   private busy = false;
 
-  constructor(root: HTMLElement, analyze: AnalyzePreview = analyzePreview) {
+  constructor(
+    root: HTMLElement,
+    analyze: AnalyzePreview = analyzePreview,
+    download: DownloadZip = downloadFile,
+  ) {
     this.analyze = analyze;
+    this.download = download;
     this.card = new GenerateShowCard(root);
     this.card.button.addEventListener("click", () => {
       void this.run();
@@ -49,11 +60,16 @@ export class ShowFlow {
     const mode = modeFromSync(this.card.sync.checked);
     this.card.setBusy(ANALYZING);
     try {
-      const analysis = await this.analyze(song.previewUrl);
+      const prepared = await this.analyze(song.previewUrl);
       this.card.setBusy(BUILDING);
-      // Let the browser paint "Building light show…" before the grid is filled.
+      // Let the browser paint "Building light show…" before the files are written.
       await Promise.resolve();
-      this.lightShow = choreographPulse(analysis, { mode: mode });
+      const frames = choreographPulse(prepared.analysis, { mode: mode });
+      this.lightShow = frames;
+      const slug = showSlug(song.artistName, song.trackName);
+      const fseq = writeFseq(frames);
+      const wav = writeWav([prepared.samples], prepared.sampleRate);
+      this.download(`${slug}.zip`, buildShowZip(slug, fseq, wav));
       this.card.setReady(READY);
       this.notify(mode, song);
     } catch {
@@ -71,8 +87,12 @@ export class ShowFlow {
   }
 }
 
-export function mountShowFlow(root: HTMLElement, analyze: AnalyzePreview = analyzePreview): ShowFlow {
-  return new ShowFlow(root, analyze);
+export function mountShowFlow(
+  root: HTMLElement,
+  analyze: AnalyzePreview = analyzePreview,
+  download: DownloadZip = downloadFile,
+): ShowFlow {
+  return new ShowFlow(root, analyze, download);
 }
 
 function modeFromSync(checked: boolean): PulseMode {

@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { searchSongs } from "./itunes";
 
+const SAMPLE_URL = "https://example.com/preview.m4a";
+
 afterEach(() => {
   vi.unstubAllGlobals();
 });
@@ -18,7 +20,7 @@ describe("searchSongs", () => {
           artistName: "Daft Punk",
           collectionName: "Random Access Memories",
           artworkUrl100: "https://example.com/art.jpg",
-          previewUrl: "https://example.com/preview.m4a",
+          previewUrl: SAMPLE_URL,
         },
         {
           trackId: 2,
@@ -44,7 +46,7 @@ describe("searchSongs", () => {
         trackName: "Get Lucky",
         artistName: "Daft Punk",
         artworkUrl: "https://example.com/art.jpg",
-        previewUrl: "https://example.com/preview.m4a",
+        previewUrl: SAMPLE_URL,
       },
     ]);
 
