@@ -23,8 +23,15 @@ export function mountSongCard(root: HTMLElement): SongCard {
 
   return {
     show(song: Song): void {
-      image.src = song.artworkUrl;
-      image.alt = `Artwork for ${song.trackName} by ${song.artistName}`;
+      if (song.artworkUrl.length === 0) {
+        image.removeAttribute("src");
+        image.alt = "";
+        image.hidden = true;
+      } else {
+        image.hidden = false;
+        image.src = song.artworkUrl;
+        image.alt = `Artwork for ${song.trackName} by ${song.artistName}`;
+      }
       title.textContent = song.trackName;
       artist.textContent = song.artistName;
       card.hidden = false;
