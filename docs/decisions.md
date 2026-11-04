@@ -67,3 +67,7 @@ Clicking Generate & Download analyzes the 30-second preview, then builds the pul
 ## 2026-11-03 — Generate & Download saves the zip
 
 The button now analyzes the preview, builds the pulse grid, writes the FSEQ and WAV from that same audio, and downloads one zip. The browser uses a short-lived link so the file name is the song slug. The button shows progress while that runs, then returns to normal. The zip is the USB package. Nothing else on the page changed.
+
+## 2026-11-04 — A local song file uses the same show path
+
+Apple previews are only 30 seconds. Next to search, the page can take a local audio file. The file stays in the browser: it plays in the preview, and Generate & Download builds the show from it through the same analyze, FSEQ, WAV, and zip path. For now that show still uses only the first 30 seconds. The download name is the file name without its extension, slugified. Uploads open the way to longer shows later.
