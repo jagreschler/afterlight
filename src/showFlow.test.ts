@@ -7,7 +7,7 @@ import { mountShowFlow, ShowFlow } from "./showFlow";
 
 const GENERATE_LABEL = "Generate";
 const DOWNLOAD_LABEL = "Download";
-const SYNC_LABEL = "Sync all lights";
+const SYNC_LABEL = "Sync lights";
 const HIDDEN = true;
 const SHOWN = false;
 const UNCHECKED = false;
@@ -54,7 +54,8 @@ describe("show flow", () => {
     view.flow.songSelected(song(FIRST_TITLE));
 
     expect(view.root.hidden).toBe(SHOWN);
-    expect(view.sync.checked).toBe(UNCHECKED);
+    expect(view.root.textContent).toContain(SYNC_LABEL);
+    expect(view.syncLights.checked).toBe(UNCHECKED);
   });
 
   it("passes split when sync is off and together when it is checked", async () => {
@@ -75,8 +76,8 @@ describe("show flow", () => {
     const splitNotice = { mode: SPLIT, title: FIRST_TITLE };
     expect(seen).toEqual([splitNotice, splitNotice]);
 
-    view.sync.click();
-    expect(view.sync.checked).toBe(CHECKED);
+    view.syncLights.click();
+    expect(view.syncLights.checked).toBe(CHECKED);
     view.generate.click();
     await settle();
 
@@ -157,7 +158,7 @@ describe("show flow", () => {
     await settle();
     expect(view.download.hidden).toBe(SHOWN);
 
-    view.sync.click();
+    view.syncLights.click();
     expect(view.download.hidden).toBe(HIDDEN);
 
     view.generate.click();
@@ -203,7 +204,7 @@ describe("show flow", () => {
   it("stores Sync all lights as syncLights", async () => {
     const view = mount(async () => readyPreview());
     view.flow.songSelected(song(FIRST_TITLE));
-    view.sync.click();
+    view.syncLights.click();
     view.generate.click();
     await settle();
 
@@ -290,7 +291,7 @@ function mount(
   flow: ShowFlow;
   root: HTMLElement;
   generate: HTMLButtonElement;
-  sync: HTMLInputElement;
+  syncLights: HTMLInputElement;
   length: HTMLSelectElement;
   start: HTMLInputElement;
   download: HTMLButtonElement;
@@ -303,7 +304,7 @@ function mount(
       : mountShowFlow(root, analyze)
     : mountShowFlow(root, analyze ?? (async () => readyPreview()), saveZip);
   const generate = buttonNamed(root, GENERATE_LABEL);
-  const sync = syncBox(root);
+  const syncLights = syncBox(root);
   const length = lengthBox(root);
   const start = startBox(root);
   const download = downloadButton(root);
@@ -311,7 +312,7 @@ function mount(
     flow: flow,
     root: root,
     generate: generate,
-    sync: sync,
+    syncLights: syncLights,
     length: length,
     start: start,
     download: download,

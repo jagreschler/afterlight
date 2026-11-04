@@ -1,4 +1,4 @@
-const SYNC_LABEL = "Sync all lights";
+const SYNC_LABEL = "Sync lights";
 const GENERATE_LABEL = "Generate";
 const DOWNLOAD_LABEL = "Download";
 const LENGTH_LABEL = "Show length";
@@ -10,7 +10,7 @@ const LONG_SECONDS = 60;
 const LENGTH_SECONDS = [PREVIEW_SECONDS, MID_SECONDS, LONG_SECONDS];
 
 export class GenerateShowCard {
-  readonly sync: HTMLInputElement;
+  readonly syncLights: HTMLInputElement;
   readonly button: HTMLButtonElement;
   readonly download: HTMLButtonElement;
   private readonly length: HTMLSelectElement;
@@ -51,11 +51,11 @@ export class GenerateShowCard {
 
     const label = document.createElement("label");
     label.className = "sync-lights";
-    this.sync = document.createElement("input");
-    this.sync.type = "checkbox";
+    this.syncLights = document.createElement("input");
+    this.syncLights.type = "checkbox";
     const caption = document.createElement("span");
     caption.textContent = SYNC_LABEL;
-    label.append(this.sync, caption);
+    label.append(this.syncLights, caption);
 
     const button = document.createElement("button");
     button.type = "button";
@@ -70,7 +70,7 @@ export class GenerateShowCard {
     save.hidden = true;
     this.download = save;
 
-    this.sync.addEventListener("change", () => {
+    this.syncLights.addEventListener("change", () => {
       this.markStale();
     });
     this.length.addEventListener("change", () => {

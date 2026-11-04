@@ -81,7 +81,7 @@ export class ShowFlow {
     this.busy = true;
     const seconds = this.card.seconds();
     const start = this.card.startSeconds();
-    const synced = this.card.sync.checked;
+    const synced = this.card.syncLights.checked;
     const mode = modeFromSync(synced);
     this.card.setBusy(ANALYZING);
     try {
@@ -145,7 +145,7 @@ export class ShowFlow {
     if (this.card.startSeconds() !== built.start) {
       return false;
     }
-    return this.card.sync.checked === built.syncLights;
+    return this.card.syncLights.checked === built.syncLights;
   }
 
   private notify(mode: PulseMode, song: Song): void {
