@@ -8,12 +8,26 @@ const DARK = "0";
 const FIRST = 0;
 const HEADLIGHT = ".light-preview .headlight";
 const TURN = ".light-preview .turn-signal";
+const CAR_BODY = ".light-preview svg .car-body";
 
 afterEach(() => {
   document.body.replaceChildren();
 });
 
 describe("light preview", () => {
+  it("draws a car body behind the lights", () => {
+    const view = mount();
+    const body = view.root.querySelector(CAR_BODY);
+    const headlight = view.root.querySelector(HEADLIGHT);
+
+    expect(body).toBeInstanceOf(SVGElement);
+    if (!(body instanceof Element) || headlight === null) {
+      throw new Error("missing car body");
+    }
+    const order = body.compareDocumentPosition(headlight);
+    expect(order & Node.DOCUMENT_POSITION_FOLLOWING).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+  });
+
   it("turns a headlight on for one frame and off for the next", () => {
     const view = mount();
     const leftOuter = HEADLIGHTS[FIRST];
