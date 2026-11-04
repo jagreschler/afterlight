@@ -1,6 +1,7 @@
 import { analyzePreview, type AnalyzedPreview } from "./analyzePreview";
 import { downloadFile } from "./downloadFile";
 import type { Song } from "./itunes";
+import { mountPreviewRenderer, type LightPreview } from "./previewRenderer";
 import { choreographPulse, type PulseMode } from "./pulse";
 import { buildShowZip } from "./showPackage";
 import { showSlug } from "./slugify";
@@ -37,6 +38,8 @@ export class ShowFlow {
   private built: BuiltShow | null = null;
   private zipName = "";
   private zipBytes: Uint8Array | null = null;
+  private readonly previewRoot: HTMLElement;
+  private preview: LightPreview | null = null;
 
   constructor(
     root: HTMLElement,
@@ -55,6 +58,9 @@ export class ShowFlow {
     this.card.download.addEventListener("click", () => {
       this.save();
     });
+    this.previewRoot = document.createElement("div");
+    this.previewRoot.hidden = true;
+    this.card.download.before(this.previewRoot);
   }
 
   songSelected(song: Song): void {
@@ -104,15 +110,30 @@ export class ShowFlow {
       this.zipBytes = buildShowZip(slug, fseq, wav);
       this.card.setReady(READY);
       this.refreshDownload();
+      this.showPreview(frames);
       this.notify(mode, song);
     } catch {
       this.lightShow = null;
       this.zipBytes = null;
       this.built = null;
+      this.previewRoot.hidden = true;
       this.card.setFailed(FAILED);
     } finally {
       this.busy = false;
     }
+  }
+
+  private showPreview(frames: Uint8Array[]): void {
+    const frame = frames[0];
+    if (frame === undefined) {
+      this.previewRoot.hidden = true;
+      return;
+    }
+    if (this.preview === null) {
+      this.preview = mountPreviewRenderer(this.previewRoot);
+    }
+    this.preview.show(frame);
+    this.previewRoot.hidden = false;
   }
 
   private save(): void {

@@ -87,3 +87,7 @@ This is a spike, not the finished preview. Later, Generate will animate a Tesla 
 ## 2026-11-04 — Generate and Download are separate
 
 The button now says Generate. It still analyzes the song and builds the zip, but it does not save the file. Download appears beside it only after that build. It stays visible while the song, length, start, and sync match that Generate, and hides when any of them differs. Changing a setting back shows it again, so there is no Reset button. The light preview will sit between those two steps. The stored sync choice is named syncLights so it is clearly the Sync all lights option. The checkbox property was renamed from sync to syncLights to match that stored field. The visible label is now "Sync lights": shorter, and "all" was unnecessary. markStale was renamed to notifyOptionsEdited because the name should describe the event, the options were edited, rather than the effect of marking the show stale. It only calls the onEdit hook.
+
+## 2026-11-04 — The light preview is static first
+
+After Generate succeeds, the page shows the SVG light picture from the spike, painted with the first frame of the show. It stays still. Animation in time with the song is the next step, and keeping this step static makes that change small. The picture uses the same red on black as the rest of the page and scales to the width of the column.

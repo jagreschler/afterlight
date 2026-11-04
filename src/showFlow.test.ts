@@ -7,6 +7,7 @@ import { mountShowFlow, ShowFlow } from "./showFlow";
 
 const GENERATE_LABEL = "Generate";
 const DOWNLOAD_LABEL = "Download";
+const LIGHT_PREVIEW = ".light-preview svg";
 const SYNC_LABEL = "Sync lights";
 const HIDDEN = true;
 const SHOWN = false;
@@ -121,6 +122,18 @@ describe("show flow", () => {
     expect(view.generate.textContent).toBe(FAILED);
     expect(view.flow.lightShow).toBeNull();
     expect(view.download.hidden).toBe(HIDDEN);
+  });
+
+  it("shows the light preview after Generate and not before", async () => {
+    const view = mount(async () => readyPreview());
+    view.flow.songSelected(song(FIRST_TITLE));
+
+    expect(view.root.querySelector(LIGHT_PREVIEW)).toBeNull();
+
+    view.generate.click();
+    await settle();
+
+    expect(view.root.querySelector(LIGHT_PREVIEW)).toBeInstanceOf(SVGElement);
   });
 
   it("builds the show on Generate and saves the zip only from Download", async () => {
