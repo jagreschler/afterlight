@@ -13,6 +13,8 @@ const DOWNLOAD_BUTTON = ".generate .download-button";
 const SYNC_LABEL = "Sync lights";
 const HIDDEN = true;
 const SHOWN = false;
+const DISABLED = true;
+const ENABLED = false;
 const UNCHECKED = false;
 const CHECKED = true;
 const SPLIT = "split";
@@ -88,7 +90,7 @@ describe("light show generator", () => {
     expect(seen).toEqual([splitNotice, splitNotice, togetherNotice, togetherNotice]);
   });
 
-  it("disables the button while analyzing, then while building, then enables it", async () => {
+  it("disables the button while analyzing and building, and leaves it disabled once built", async () => {
     const pending = deferred<AnalyzedPreview>();
     const view = mount(() => pending.promise);
     view.generator.songSelected(song(FIRST_TITLE));
@@ -106,8 +108,10 @@ describe("light show generator", () => {
 
     await Promise.resolve();
 
-    expect(view.generate.disabled).toBe(false);
+    expect(view.generate.disabled).toBe(true);
+    expect(view.generate.hidden).toBe(SHOWN);
     expect(view.generate.textContent).toBe(GENERATE_LABEL);
+    expect(view.download.hidden).toBe(SHOWN);
     expect(view.generator.lightShow).toHaveLength(ONE_FRAME);
   });
 
@@ -140,25 +144,27 @@ describe("light show generator", () => {
     expect(generate.nextElementSibling).toBe(download);
   });
 
-  it("shows only Generate before a show is built", () => {
+  it("shows an enabled Generate and no Download before a show is built", () => {
     const view = mount();
     view.generator.songSelected(song(FIRST_TITLE));
 
     expect(buttonHidden(view.root, GENERATE_BUTTON)).toBe(SHOWN);
+    expect(buttonDisabled(view.root, GENERATE_BUTTON)).toBe(ENABLED);
     expect(buttonHidden(view.root, DOWNLOAD_BUTTON)).toBe(HIDDEN);
   });
 
-  it("shows only Download after Generate", async () => {
+  it("keeps Generate visible but disabled and shows Download after Generate", async () => {
     const view = mount(async () => readyPreview());
     view.generator.songSelected(song(FIRST_TITLE));
     view.generate.click();
     await settle();
 
-    expect(buttonHidden(view.root, GENERATE_BUTTON)).toBe(HIDDEN);
+    expect(buttonHidden(view.root, GENERATE_BUTTON)).toBe(SHOWN);
+    expect(buttonDisabled(view.root, GENERATE_BUTTON)).toBe(DISABLED);
     expect(buttonHidden(view.root, DOWNLOAD_BUTTON)).toBe(SHOWN);
   });
 
-  it("shows only Generate after an option changes", async () => {
+  it("enables Generate and hides Download after an option changes", async () => {
     const view = mount(async () => readyPreview());
     view.generator.songSelected(song(FIRST_TITLE));
     view.generate.click();
@@ -166,6 +172,7 @@ describe("light show generator", () => {
     view.syncLights.click();
 
     expect(buttonHidden(view.root, GENERATE_BUTTON)).toBe(SHOWN);
+    expect(buttonDisabled(view.root, GENERATE_BUTTON)).toBe(ENABLED);
     expect(buttonHidden(view.root, DOWNLOAD_BUTTON)).toBe(HIDDEN);
   });
 
@@ -378,11 +385,19 @@ function mount(
 }
 
 function buttonHidden(root: ParentNode, selector: string): boolean {
+  return showButton(root, selector).hidden;
+}
+
+function buttonDisabled(root: ParentNode, selector: string): boolean {
+  return showButton(root, selector).disabled;
+}
+
+function showButton(root: ParentNode, selector: string): HTMLButtonElement {
   const button = root.querySelector(selector);
   if (!(button instanceof HTMLButtonElement)) {
     throw new Error(`missing ${selector}`);
   }
-  return button.hidden;
+  return button;
 }
 
 function downloadButton(root: ParentNode): HTMLButtonElement {
