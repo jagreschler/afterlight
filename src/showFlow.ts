@@ -9,7 +9,7 @@ import { writeWav } from "./wavWriter";
 import { GenerateShowCard } from "./generateShowCard";
 
 type GenerateHook = (mode: PulseMode, song: Song) => void;
-type AnalyzePreview = (url: string) => Promise<AnalyzedPreview>;
+type AnalyzePreview = (url: string, seconds: number) => Promise<AnalyzedPreview>;
 type DownloadZip = (name: string, bytes: Uint8Array) => void;
 
 const SPLIT: PulseMode = "split";
@@ -18,6 +18,7 @@ const ANALYZING = "Analyzing song…";
 const BUILDING = "Building light show…";
 const FAILED = "Couldn't build the light show.";
 const READY = "Generate & Download";
+const UPLOAD_TRACK_ID = 0;
 
 export class ShowFlow {
   lightShow: Uint8Array[] | null = null;
@@ -43,6 +44,7 @@ export class ShowFlow {
 
   songSelected(song: Song): void {
     this.song = song;
+    this.card.setUploaded(song.trackId === UPLOAD_TRACK_ID);
     this.card.show();
   }
 
@@ -60,7 +62,7 @@ export class ShowFlow {
     const mode = modeFromSync(this.card.sync.checked);
     this.card.setBusy(ANALYZING);
     try {
-      const prepared = await this.analyze(song.previewUrl);
+      const prepared = await this.analyze(song.previewUrl, this.card.seconds());
       this.card.setBusy(BUILDING);
       // Let the browser paint "Building light show…" before the files are written.
       await Promise.resolve();

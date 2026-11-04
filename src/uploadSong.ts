@@ -1,7 +1,7 @@
 import type { Song } from "./itunes";
 
 const NOTE =
-  "Apple previews are only 30 seconds. Upload your own song file for longer shows. Longer lengths are coming soon.";
+  "Apple previews are only 30 seconds. Upload your own song file for 45 or 60 second shows.";
 
 export function mountUploadSong(root: HTMLElement, onSong: (song: Song) => void): void {
   root.classList.add("upload-song");

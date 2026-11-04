@@ -43,7 +43,8 @@ h1 {
   display: none;
 }
 
-.sync-lights {
+.sync-lights,
+.show-length {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -51,6 +52,16 @@ h1 {
   color: var(--muted);
   font-size: 0.9rem;
   cursor: pointer;
+}
+
+.show-length select {
+  font: inherit;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  min-height: var(--tap);
+  padding: 0 0.5rem;
 }
 
 .sync-lights input {
@@ -74,6 +85,7 @@ h1 {
 }
 
 .sync-lights:focus-within,
+.show-length select:focus-visible,
 .generate-button:focus-visible,
 .search input:focus-visible,
 .upload-button:focus-within,

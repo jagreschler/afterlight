@@ -7,7 +7,7 @@ const FILE_NAME = "My Song.mp3";
 const SONG_NAME = "My Song";
 const SLUG = "my-song";
 const ACCEPT = "audio/*";
-const NOTE = "Apple previews are only 30 seconds. Upload your own song file for longer shows. Longer lengths are coming soon.";
+const NOTE = "Apple previews are only 30 seconds. Upload your own song file for 45 or 60 second shows.";
 
 afterEach(() => {
   document.body.replaceChildren();
