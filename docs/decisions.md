@@ -102,9 +102,9 @@ Test files are not split at about 100–120 lines. Consider splitting one into s
 
 ## 2026-11-04 — The preview shows a car, not only dots
 
-The light preview shows two photographs, because one angled shot could not place every lamp. The front view is a Model 3 seen nearly straight on, cropped taller so the face is not a short banner, and it shows the four headlights plus the two front turn signals. The top view is a Tesla Roadster photographed from above. No freely licensed overhead photo of a Model 3 or Model Y turned up, and a Roadster is still a Tesla, so it carries all eight lights. The same channel drives the matching dot in both views. On a narrow screen the views stack; on a wide screen they sit side by side, aligned at the top so neither box is stretched. Both photos are bundled in the app, not loaded from a remote URL, so the preview works offline and the link cannot break.
+The light preview shows two photographs, because one angled shot could not place every lamp. The front view is the repo owner's own photo of his Model 3, taken straight on and cropped around the car. No license credit is needed for that photo. It shows the four headlights plus the two front turn signals. The top view is a Tesla Roadster photographed from above. No freely licensed overhead photo of a Model 3 or Model Y turned up, and a Roadster is still a Tesla, so it carries all eight lights. The same channel drives the matching dot in both views. On a narrow screen the views stack; on a wide screen they sit side by side, aligned at the top so neither box is stretched. Both photos are bundled in the app, not loaded from a remote URL, so the preview works offline and the link cannot break.
 
-Front photo: iMoD Official, CC BY 3.0, https://commons.wikimedia.org/wiki/File:2024_Tesla_Model_3_Performance_front_view_03.png. Top photo: Norio Nakayama, CC BY-SA 2.0, https://commons.wikimedia.org/wiki/File:Tesla_Roadster_Sport_top_view.jpg. Both licenses require credit, so a short line sits under the preview.
+Top photo: Norio Nakayama, CC BY-SA 2.0, https://commons.wikimedia.org/wiki/File:Tesla_Roadster_Sport_top_view.jpg. That license requires credit, so a short line sits under the preview. The earlier stock front photo is no longer used.
 
 ## 2026-11-04 — ShowFlow is now LightShowGenerator
 

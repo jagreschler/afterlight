@@ -5,7 +5,7 @@ export type Spot = {
 
 export const FRONT_PHOTO = "tesla-model-3-front.jpg";
 export const FRONT_WIDTH = 800;
-export const FRONT_HEIGHT = 560;
+export const FRONT_HEIGHT = 599;
 
 export const TOP_PHOTO = "tesla-top.jpg";
 export const TOP_WIDTH = 640;
@@ -13,15 +13,15 @@ export const TOP_HEIGHT = 582;
 
 // Front photo faces the camera. Image-left is the car's right.
 export const FRONT_HEADLIGHTS: Spot[] = [
-  { x: 390, y: 260 },
-  { x: 68, y: 268 },
-  { x: 330, y: 265 },
-  { x: 90, y: 258 },
+  { x: 690, y: 270 },
+  { x: 115, y: 270 },
+  { x: 635, y: 278 },
+  { x: 165, y: 278 },
 ];
 
 export const FRONT_TURNS: Spot[] = [
-  { x: 405, y: 278 },
-  { x: 66, y: 288 },
+  { x: 685, y: 295 },
+  { x: 120, y: 295 },
 ];
 
 // Overhead Roadster. The nose, with the grille, is at the bottom.

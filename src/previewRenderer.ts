@@ -16,7 +16,7 @@ import {
 const FULL = 255;
 const FRONT_RADIUS = 16;
 const TOP_RADIUS = 8;
-const CREDIT = "Front: iMoD Official, CC BY 3.0. Top: Norio Nakayama, CC BY-SA 2.0.";
+const CREDIT = "Top photo: Norio Nakayama, CC BY-SA 2.0.";
 
 export type LightPreview = {
   show(frame: Uint8Array): void;

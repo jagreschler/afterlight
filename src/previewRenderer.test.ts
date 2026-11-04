@@ -66,6 +66,11 @@ describe("light preview", () => {
     view.preview.show(frame(leftOuter, ON));
     expect(opacity(front, ".headlight")).toBe(LIT);
     expect(opacity(top, ".headlight")).toBe(LIT);
+
+    const credit = view.root.querySelector(".photo-credit");
+    const creditText = credit?.textContent ?? "";
+    expect(creditText).not.toContain("iMoD");
+    expect(creditText).toContain("Norio Nakayama");
   });
 
   it("turns a headlight on for one frame and off for the next", () => {
