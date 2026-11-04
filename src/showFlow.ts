@@ -11,13 +11,19 @@ import { GenerateShowCard } from "./generateShowCard";
 type GenerateHook = (mode: PulseMode, song: Song) => void;
 type AnalyzePreview = (url: string, seconds: number, start: number) => Promise<AnalyzedPreview>;
 type DownloadZip = (name: string, bytes: Uint8Array) => void;
+export type BuiltShow = {
+  previewUrl: string;
+  seconds: number;
+  start: number;
+  syncLights: boolean;
+};
 
 const SPLIT: PulseMode = "split";
 const TOGETHER: PulseMode = "together";
 const ANALYZING = "Analyzing song…";
 const BUILDING = "Building light show…";
 const FAILED = "Couldn't build the light show.";
-const READY = "Generate & Download";
+const READY = "Generate";
 const UPLOAD_TRACK_ID = 0;
 
 export class ShowFlow {
@@ -28,6 +34,9 @@ export class ShowFlow {
   private readonly download: DownloadZip;
   private song: Song | null = null;
   private busy = false;
+  private built: BuiltShow | null = null;
+  private zipName = "";
+  private zipBytes: Uint8Array | null = null;
 
   constructor(
     root: HTMLElement,
@@ -37,8 +46,14 @@ export class ShowFlow {
     this.analyze = analyze;
     this.download = download;
     this.card = new GenerateShowCard(root);
+    this.card.onEdit(() => {
+      this.refreshDownload();
+    });
     this.card.button.addEventListener("click", () => {
       void this.run();
+    });
+    this.card.download.addEventListener("click", () => {
+      this.save();
     });
   }
 
@@ -46,10 +61,15 @@ export class ShowFlow {
     this.song = song;
     this.card.setUploaded(song.trackId === UPLOAD_TRACK_ID);
     this.card.show();
+    this.card.notifyOptionsEdited();
   }
 
   onGenerate(hook: GenerateHook): void {
     this.generateHooks.push(hook);
+  }
+
+  builtShow(): BuiltShow | null {
+    return this.built;
   }
 
   private async run(): Promise<void> {
@@ -59,10 +79,13 @@ export class ShowFlow {
     }
 
     this.busy = true;
-    const mode = modeFromSync(this.card.sync.checked);
+    const seconds = this.card.seconds();
+    const start = this.card.startSeconds();
+    const synced = this.card.syncLights.checked;
+    const mode = modeFromSync(synced);
     this.card.setBusy(ANALYZING);
     try {
-      const prepared = await this.analyze(song.previewUrl, this.card.seconds(), this.card.startSeconds());
+      const prepared = await this.analyze(song.previewUrl, seconds, start);
       this.card.setBusy(BUILDING);
       // Let the browser paint "Building light show…" before the files are written.
       await Promise.resolve();
@@ -71,15 +94,58 @@ export class ShowFlow {
       const slug = showSlug(song.artistName, song.trackName);
       const fseq = writeFseq(frames);
       const wav = writeWav([prepared.samples], prepared.sampleRate);
-      this.download(`${slug}.zip`, buildShowZip(slug, fseq, wav));
+      this.built = {
+        previewUrl: song.previewUrl,
+        seconds: seconds,
+        start: start,
+        syncLights: synced,
+      };
+      this.zipName = `${slug}.zip`;
+      this.zipBytes = buildShowZip(slug, fseq, wav);
       this.card.setReady(READY);
+      this.refreshDownload();
       this.notify(mode, song);
     } catch {
       this.lightShow = null;
+      this.zipBytes = null;
+      this.built = null;
       this.card.setFailed(FAILED);
     } finally {
       this.busy = false;
     }
+  }
+
+  private save(): void {
+    if (this.zipBytes === null) {
+      return;
+    }
+    this.download(this.zipName, this.zipBytes);
+  }
+
+  private refreshDownload(): void {
+    if (this.matchesBuilt()) {
+      this.card.showDownload();
+      return;
+    }
+    this.card.hideDownload();
+  }
+
+  private matchesBuilt(): boolean {
+    const built = this.built;
+    const song = this.song;
+    if (built === null || song === null || this.zipBytes === null) {
+      return false;
+    }
+    if (song.previewUrl !== built.previewUrl) {
+      return false;
+    }
+    if (this.card.seconds() !== built.seconds) {
+      return false;
+    }
+    if (this.card.startSeconds() !== built.start) {
+      return false;
+    }
+    return this.card.syncLights.checked === built.syncLights;
   }
 
   private notify(mode: PulseMode, song: Song): void {

@@ -1,5 +1,6 @@
-const SYNC_LABEL = "Sync all lights";
-const GENERATE_LABEL = "Generate & Download";
+const SYNC_LABEL = "Sync lights";
+const GENERATE_LABEL = "Generate";
+const DOWNLOAD_LABEL = "Download";
 const LENGTH_LABEL = "Show length";
 const START_LABEL = "Start at";
 const START_AT = 0;
@@ -9,11 +10,13 @@ const LONG_SECONDS = 60;
 const LENGTH_SECONDS = [PREVIEW_SECONDS, MID_SECONDS, LONG_SECONDS];
 
 export class GenerateShowCard {
-  readonly sync: HTMLInputElement;
+  readonly syncLights: HTMLInputElement;
   readonly button: HTMLButtonElement;
+  readonly download: HTMLButtonElement;
   private readonly length: HTMLSelectElement;
   private readonly start: HTMLInputElement;
   private readonly root: HTMLElement;
+  private edited: (() => void) | null = null;
 
   constructor(root: HTMLElement) {
     this.root = root;
@@ -48,11 +51,11 @@ export class GenerateShowCard {
 
     const label = document.createElement("label");
     label.className = "sync-lights";
-    this.sync = document.createElement("input");
-    this.sync.type = "checkbox";
+    this.syncLights = document.createElement("input");
+    this.syncLights.type = "checkbox";
     const caption = document.createElement("span");
     caption.textContent = SYNC_LABEL;
-    label.append(this.sync, caption);
+    label.append(this.syncLights, caption);
 
     const button = document.createElement("button");
     button.type = "button";
@@ -60,7 +63,42 @@ export class GenerateShowCard {
     button.textContent = GENERATE_LABEL;
     this.button = button;
 
-    this.root.replaceChildren(lengthLabel, startLabel, label, button);
+    const save = document.createElement("button");
+    save.type = "button";
+    save.className = "download-button";
+    save.textContent = DOWNLOAD_LABEL;
+    save.hidden = true;
+    this.download = save;
+
+    this.syncLights.addEventListener("change", () => {
+      this.notifyOptionsEdited();
+    });
+    this.length.addEventListener("change", () => {
+      this.notifyOptionsEdited();
+    });
+    this.start.addEventListener("input", () => {
+      this.notifyOptionsEdited();
+    });
+
+    this.root.replaceChildren(lengthLabel, startLabel, label, button, save);
+  }
+
+  onEdit(hook: () => void): void {
+    this.edited = hook;
+  }
+
+  notifyOptionsEdited(): void {
+    if (this.edited !== null) {
+      this.edited();
+    }
+  }
+
+  showDownload(): void {
+    this.download.hidden = false;
+  }
+
+  hideDownload(): void {
+    this.download.hidden = true;
   }
 
   show(): void {
@@ -94,6 +132,7 @@ export class GenerateShowCard {
   setBusy(message: string): void {
     this.button.disabled = true;
     this.button.textContent = message;
+    this.hideDownload();
   }
 
   setReady(label: string): void {
@@ -104,5 +143,6 @@ export class GenerateShowCard {
   setFailed(message: string): void {
     this.button.disabled = false;
     this.button.textContent = message;
+    this.hideDownload();
   }
 }
