@@ -5,10 +5,11 @@ import { describe, expect, it } from "vitest";
 const ICON = 'link[rel="icon"]';
 const FILE = "favicon.svg";
 const HREF = `%BASE_URL%${FILE}`;
+const STYLESHEET = /<link rel="stylesheet"[^>]*>/g;
 
 describe("favicon", () => {
   it("links a favicon file that exists", () => {
-    const html = readFileSync(join(process.cwd(), "index.html"), "utf8");
+    const html = readFileSync(join(process.cwd(), "index.html"), "utf8").replace(STYLESHEET, "");
     const doc = new DOMParser().parseFromString(html, "text/html");
     const link = doc.querySelector(ICON);
     expect(link).toBeInstanceOf(Element);
