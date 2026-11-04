@@ -117,3 +117,7 @@ The top view no longer uses the Roadster photo. It uses an AI-generated top-down
 ## 2026-11-04 — The page shows its version
 
 A small version number sits in a corner of the page so Jason can tell which build he is viewing. The number lives in one place, `package.json`. The build reads that field and shows it. Bump it with every change: a patch for fixes and small tweaks, and a minor for features.
+
+## 2026-11-04 — Car photos use content-hashed names
+
+The car photos are imported, so the build gives each file a name from a hash of its bytes. Right after the car-preview deploy, a phone kept a cached old build that still pointed at deleted photos. GitHub Pages caches files for ten minutes, and the preview was blank. Unchanged bytes keep the same name, so a cached photo can stay. Changed bytes get a new name, so the next build cannot show a stale picture.
