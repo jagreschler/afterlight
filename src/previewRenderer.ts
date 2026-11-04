@@ -1,17 +1,21 @@
 import { HEADLIGHTS, TURN_SIGNALS } from "./channels";
+import { addLights, addPhoto, bundled, makeView, type PlacedLight } from "./previewDraw";
+import {
+  FRONT_HEADLIGHTS,
+  FRONT_HEIGHT,
+  FRONT_PHOTO,
+  FRONT_TURNS,
+  FRONT_WIDTH,
+  TOP_HEADLIGHTS,
+  TOP_HEIGHT,
+  TOP_PHOTO,
+  TOP_TURNS,
+  TOP_WIDTH,
+} from "./previewLayout";
 
-const SVG_NS = "http://www.w3.org/2000/svg";
 const FULL = 255;
-const VIEW_WIDTH = 120;
-const VIEW_HEIGHT = 48;
-const RADIUS = 6;
-const LEFT = 16;
-const COLUMN = 28;
-
-type PlacedLight = {
-  channel: number;
-  shape: SVGElement;
-};
+const FRONT_RADIUS = 16;
+const TOP_RADIUS = 6;
 
 export type LightPreview = {
   show(frame: Uint8Array): void;
@@ -19,12 +23,16 @@ export type LightPreview = {
 
 export function mountPreviewRenderer(root: HTMLElement): LightPreview {
   root.classList.add("light-preview");
-  const svg = document.createElementNS(SVG_NS, "svg");
-  svg.setAttribute("viewBox", `0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`);
   const lights: PlacedLight[] = [];
-  addLights(lights, svg, HEADLIGHTS, "headlight", 14);
-  addLights(lights, svg, TURN_SIGNALS, "turn-signal", 34);
-  root.replaceChildren(svg);
+  const front = makeView("view-front", FRONT_WIDTH, FRONT_HEIGHT);
+  addPhoto(front, bundled(FRONT_PHOTO), FRONT_WIDTH, FRONT_HEIGHT);
+  addLights(lights, front, HEADLIGHTS, "headlight", FRONT_HEADLIGHTS, FRONT_RADIUS);
+  addLights(lights, front, TURN_SIGNALS, "turn-signal", FRONT_TURNS, FRONT_RADIUS);
+  const top = makeView("view-top", TOP_WIDTH, TOP_HEIGHT);
+  addPhoto(top, bundled(TOP_PHOTO), TOP_WIDTH, TOP_HEIGHT);
+  addLights(lights, top, HEADLIGHTS, "headlight", TOP_HEADLIGHTS, TOP_RADIUS);
+  addLights(lights, top, TURN_SIGNALS, "turn-signal", TOP_TURNS, TOP_RADIUS);
+  root.replaceChildren(front, top);
 
   return {
     show(frame: Uint8Array): void {
@@ -34,30 +42,4 @@ export function mountPreviewRenderer(root: HTMLElement): LightPreview {
       }
     },
   };
-}
-
-function addLights(
-  lights: PlacedLight[],
-  svg: SVGSVGElement,
-  channels: readonly number[],
-  kind: string,
-  y: number,
-): void {
-  for (let index = 0; index < channels.length; index += 1) {
-    const channel = channels[index];
-    if (channel === undefined) {
-      continue;
-    }
-    const shape = document.createElementNS(SVG_NS, "circle");
-    shape.setAttribute("class", kind);
-    shape.setAttribute("cx", String(LEFT + index * COLUMN));
-    shape.setAttribute("cy", String(y));
-    shape.setAttribute("r", String(RADIUS));
-    shape.setAttribute("opacity", "0");
-    svg.append(shape);
-    lights.push({
-      channel: channel,
-      shape: shape,
-    });
-  }
 }

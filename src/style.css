@@ -78,6 +78,10 @@ h1 {
 }
 
 .light-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.75rem;
   width: 100%;
   margin-top: 0.25rem;
 }
@@ -86,14 +90,27 @@ h1 {
   display: none;
 }
 
-.light-preview svg {
+.view-front,
+.view-top {
   display: block;
+  flex: 1 1 100%;
   width: 100%;
-  max-width: 16rem;
   height: auto;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 6px;
+}
+
+@media (min-width: 48rem) {
+  .view-front {
+    flex: 1.15 1 16rem;
+    width: auto;
+  }
+
+  .view-top {
+    flex: 1 1 14rem;
+    width: auto;
+  }
 }
 
 .light-preview .headlight,
