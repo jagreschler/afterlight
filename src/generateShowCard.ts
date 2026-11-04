@@ -88,7 +88,6 @@ export class GenerateShowCard {
   }
 
   markStale(): void {
-    this.download.hidden = true;
     if (this.edited !== null) {
       this.edited();
     }
@@ -96,6 +95,10 @@ export class GenerateShowCard {
 
   showDownload(): void {
     this.download.hidden = false;
+  }
+
+  hideDownload(): void {
+    this.download.hidden = true;
   }
 
   show(): void {
@@ -129,7 +132,7 @@ export class GenerateShowCard {
   setBusy(message: string): void {
     this.button.disabled = true;
     this.button.textContent = message;
-    this.download.hidden = true;
+    this.hideDownload();
   }
 
   setReady(label: string): void {
@@ -140,6 +143,6 @@ export class GenerateShowCard {
   setFailed(message: string): void {
     this.button.disabled = false;
     this.button.textContent = message;
-    this.download.hidden = true;
+    this.hideDownload();
   }
 }

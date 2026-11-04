@@ -11,6 +11,12 @@ import { GenerateShowCard } from "./generateShowCard";
 type GenerateHook = (mode: PulseMode, song: Song) => void;
 type AnalyzePreview = (url: string, seconds: number, start: number) => Promise<AnalyzedPreview>;
 type DownloadZip = (name: string, bytes: Uint8Array) => void;
+type BuiltShow = {
+  previewUrl: string;
+  seconds: number;
+  start: number;
+  sync: boolean;
+};
 
 const SPLIT: PulseMode = "split";
 const TOGETHER: PulseMode = "together";
@@ -28,7 +34,7 @@ export class ShowFlow {
   private readonly download: DownloadZip;
   private song: Song | null = null;
   private busy = false;
-  private edition = 0;
+  private built: BuiltShow | null = null;
   private zipName = "";
   private zipBytes: Uint8Array | null = null;
 
@@ -41,8 +47,7 @@ export class ShowFlow {
     this.download = download;
     this.card = new GenerateShowCard(root);
     this.card.onEdit(() => {
-      this.edition += 1;
-      this.zipBytes = null;
+      this.refreshDownload();
     });
     this.card.button.addEventListener("click", () => {
       void this.run();
@@ -70,11 +75,13 @@ export class ShowFlow {
     }
 
     this.busy = true;
-    const edition = this.edition;
-    const mode = modeFromSync(this.card.sync.checked);
+    const seconds = this.card.seconds();
+    const start = this.card.startSeconds();
+    const synced = this.card.sync.checked;
+    const mode = modeFromSync(synced);
     this.card.setBusy(ANALYZING);
     try {
-      const prepared = await this.analyze(song.previewUrl, this.card.seconds(), this.card.startSeconds());
+      const prepared = await this.analyze(song.previewUrl, seconds, start);
       this.card.setBusy(BUILDING);
       // Let the browser paint "Building light show…" before the files are written.
       await Promise.resolve();
@@ -83,18 +90,21 @@ export class ShowFlow {
       const slug = showSlug(song.artistName, song.trackName);
       const fseq = writeFseq(frames);
       const wav = writeWav([prepared.samples], prepared.sampleRate);
+      this.built = {
+        previewUrl: song.previewUrl,
+        seconds: seconds,
+        start: start,
+        sync: synced,
+      };
       this.zipName = `${slug}.zip`;
       this.zipBytes = buildShowZip(slug, fseq, wav);
       this.card.setReady(READY);
-      if (edition === this.edition) {
-        this.card.showDownload();
-      } else {
-        this.zipBytes = null;
-      }
+      this.refreshDownload();
       this.notify(mode, song);
     } catch {
       this.lightShow = null;
       this.zipBytes = null;
+      this.built = null;
       this.card.setFailed(FAILED);
     } finally {
       this.busy = false;
@@ -106,6 +116,32 @@ export class ShowFlow {
       return;
     }
     this.download(this.zipName, this.zipBytes);
+  }
+
+  private refreshDownload(): void {
+    if (this.matchesBuilt()) {
+      this.card.showDownload();
+      return;
+    }
+    this.card.hideDownload();
+  }
+
+  private matchesBuilt(): boolean {
+    const built = this.built;
+    const song = this.song;
+    if (built === null || song === null || this.zipBytes === null) {
+      return false;
+    }
+    if (song.previewUrl !== built.previewUrl) {
+      return false;
+    }
+    if (this.card.seconds() !== built.seconds) {
+      return false;
+    }
+    if (this.card.startSeconds() !== built.start) {
+      return false;
+    }
+    return this.card.sync.checked === built.sync;
   }
 
   private notify(mode: PulseMode, song: Song): void {

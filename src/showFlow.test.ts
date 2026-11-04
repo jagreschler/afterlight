@@ -33,6 +33,7 @@ const PREVIEW_SECONDS = 30;
 const MID_SECONDS = 45;
 const LONG_SECONDS = 60;
 const UPLOAD_ID = 0;
+const UPLOAD_ZIP = "my-song.zip";
 const LENGTH_LABEL = "Show length";
 const START_AT = 0;
 const START_LATER = 10;
@@ -175,6 +176,28 @@ describe("show flow", () => {
     await settle();
     view.flow.songSelected(song(FIRST_TITLE));
     expect(view.download.hidden).toBe(HIDDEN);
+  });
+
+  it("shows Download again when the length matches the last Generate", async () => {
+    const downloads: Array<{ name: string; bytes: Uint8Array }> = [];
+    const view = mount(async () => readyPreview(), (name, bytes) => {
+      downloads.push({ name: name, bytes: bytes });
+    });
+    view.flow.songSelected(uploadedSong());
+    view.generate.click();
+    await settle();
+
+    view.length.value = String(MID_SECONDS);
+    view.length.dispatchEvent(new Event("change"));
+    expect(view.download.hidden).toBe(HIDDEN);
+
+    view.length.value = String(PREVIEW_SECONDS);
+    view.length.dispatchEvent(new Event("change"));
+    expect(view.download.hidden).toBe(SHOWN);
+
+    view.download.click();
+    expect(downloads).toHaveLength(1);
+    expect(downloads[0]?.name).toBe(UPLOAD_ZIP);
   });
 
   it("keeps show length disabled at 30 seconds for an iTunes preview", () => {
