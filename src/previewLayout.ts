@@ -3,11 +3,9 @@ export type Spot = {
   y: number;
 };
 
-export const FRONT_PHOTO = "tesla-model-3-front.jpg";
 export const FRONT_WIDTH = 800;
 export const FRONT_HEIGHT = 599;
 
-export const TOP_PHOTO = "tesla-model-3-top.jpg";
 export const TOP_WIDTH = 480;
 export const TOP_HEIGHT = 640;
 

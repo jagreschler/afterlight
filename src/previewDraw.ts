@@ -25,12 +25,6 @@ export function addPhoto(svg: SVGSVGElement, href: string, width: number, height
   svg.append(photo);
 }
 
-export function bundled(file: string): string {
-  const base = import.meta.env.BASE_URL;
-  const prefix = base.endsWith("/") ? base : `${base}/`;
-  return `${prefix}${file}`;
-}
-
 export function addLights(
   lights: PlacedLight[],
   svg: SVGSVGElement,
