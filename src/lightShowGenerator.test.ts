@@ -8,6 +8,8 @@ import { mountLightShowGenerator, LightShowGenerator } from "./lightShowGenerato
 const GENERATE_LABEL = "Generate";
 const DOWNLOAD_LABEL = "Download";
 const LIGHT_PREVIEW = ".light-preview svg";
+const GENERATE_BUTTON = ".generate .generate-button";
+const DOWNLOAD_BUTTON = ".generate .download-button";
 const SYNC_LABEL = "Sync lights";
 const HIDDEN = true;
 const SHOWN = false;
@@ -122,6 +124,20 @@ describe("light show generator", () => {
     expect(view.generate.textContent).toBe(FAILED);
     expect(view.generator.lightShow).toBeNull();
     expect(view.download.hidden).toBe(HIDDEN);
+  });
+
+  it("puts Download beside Generate", () => {
+    const view = mount();
+    const generate = view.root.querySelector(GENERATE_BUTTON);
+    const download = view.root.querySelector(DOWNLOAD_BUTTON);
+
+    expect(generate).toBeInstanceOf(HTMLButtonElement);
+    expect(download).toBeInstanceOf(HTMLButtonElement);
+    if (!(generate instanceof HTMLButtonElement) || !(download instanceof HTMLButtonElement)) {
+      throw new Error("missing show buttons");
+    }
+    expect(generate.parentElement).toBe(download.parentElement);
+    expect(generate.nextElementSibling).toBe(download);
   });
 
   it("shows the light preview after Generate and not before", async () => {
