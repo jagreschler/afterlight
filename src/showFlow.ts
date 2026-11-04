@@ -61,7 +61,7 @@ export class ShowFlow {
     this.song = song;
     this.card.setUploaded(song.trackId === UPLOAD_TRACK_ID);
     this.card.show();
-    this.card.markStale();
+    this.card.notifyOptionsEdited();
   }
 
   onGenerate(hook: GenerateHook): void {

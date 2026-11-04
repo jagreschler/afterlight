@@ -71,13 +71,13 @@ export class GenerateShowCard {
     this.download = save;
 
     this.syncLights.addEventListener("change", () => {
-      this.markStale();
+      this.notifyOptionsEdited();
     });
     this.length.addEventListener("change", () => {
-      this.markStale();
+      this.notifyOptionsEdited();
     });
     this.start.addEventListener("input", () => {
-      this.markStale();
+      this.notifyOptionsEdited();
     });
 
     this.root.replaceChildren(lengthLabel, startLabel, label, button, save);
@@ -87,7 +87,7 @@ export class GenerateShowCard {
     this.edited = hook;
   }
 
-  markStale(): void {
+  notifyOptionsEdited(): void {
     if (this.edited !== null) {
       this.edited();
     }
