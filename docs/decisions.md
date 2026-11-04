@@ -125,3 +125,7 @@ The car photos are imported, so the build gives each file a name from a hash of 
 ## 2026-11-04 — The version read lives in one module
 
 The `package.json` version read now lives in one shared module. Both the Vite config and the Vitest config import it. There is a single place to read the version, so the two configs cannot drift.
+
+## 2026-11-04 — The page has a favicon
+
+The page was asking for a favicon and getting a 404. A small hand-written SVG light burst now sits in `public/`, and the page links it with `%BASE_URL%` so the icon resolves under the GitHub Pages path `/afterlight/`.
