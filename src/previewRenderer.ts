@@ -1,29 +1,29 @@
-import { CAR_OUTLINE } from "./carOutline";
 import { HEADLIGHTS, TURN_SIGNALS } from "./channels";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 const FULL = 255;
-const VIEW_WIDTH = 120;
-const VIEW_HEIGHT = 90;
-const RADIUS = 4;
-
+const PHOTO_FILE = "tesla-model-3.jpg";
+const PHOTO_WIDTH = 800;
+const PHOTO_HEIGHT = 373;
+const RADIUS = 14;
 type Spot = {
   x: number;
   y: number;
 };
 
+// Front-left photo. Left lamps are the far housing; right lamps are the near one.
 const HEADLIGHT_SPOTS: Spot[] = [
-  { x: 32, y: 44 },
-  { x: 88, y: 44 },
-  { x: 44, y: 46 },
-  { x: 76, y: 46 },
+  { x: 400, y: 172 },
+  { x: 56, y: 166 },
+  { x: 280, y: 170 },
+  { x: 74, y: 158 },
 ];
 
 const TURN_SPOTS: Spot[] = [
-  { x: 22, y: 56 },
-  { x: 98, y: 56 },
-  { x: 28, y: 74 },
-  { x: 92, y: 74 },
+  { x: 415, y: 188 },
+  { x: 54, y: 184 },
+  { x: 640, y: 155 },
+  { x: 670, y: 175 },
 ];
 
 type PlacedLight = {
@@ -38,8 +38,8 @@ export type LightPreview = {
 export function mountPreviewRenderer(root: HTMLElement): LightPreview {
   root.classList.add("light-preview");
   const svg = document.createElementNS(SVG_NS, "svg");
-  svg.setAttribute("viewBox", `0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`);
-  addCarBody(svg);
+  svg.setAttribute("viewBox", `0 0 ${PHOTO_WIDTH} ${PHOTO_HEIGHT}`);
+  addCarPhoto(svg);
   const lights: PlacedLight[] = [];
   addLights(lights, svg, HEADLIGHTS, "headlight", HEADLIGHT_SPOTS);
   addLights(lights, svg, TURN_SIGNALS, "turn-signal", TURN_SPOTS);
@@ -55,11 +55,21 @@ export function mountPreviewRenderer(root: HTMLElement): LightPreview {
   };
 }
 
-function addCarBody(svg: SVGSVGElement): void {
-  const body = document.createElementNS(SVG_NS, "path");
-  body.setAttribute("class", "car-body");
-  body.setAttribute("d", CAR_OUTLINE);
-  svg.append(body);
+function addCarPhoto(svg: SVGSVGElement): void {
+  const photo = document.createElementNS(SVG_NS, "image");
+  photo.setAttribute("class", "car-photo");
+  photo.setAttribute("href", carPhotoUrl());
+  photo.setAttribute("x", "0");
+  photo.setAttribute("y", "0");
+  photo.setAttribute("width", String(PHOTO_WIDTH));
+  photo.setAttribute("height", String(PHOTO_HEIGHT));
+  svg.append(photo);
+}
+
+function carPhotoUrl(): string {
+  const base = import.meta.env.BASE_URL;
+  const prefix = base.endsWith("/") ? base : `${base}/`;
+  return `${prefix}${PHOTO_FILE}`;
 }
 
 function addLights(

@@ -89,18 +89,11 @@ h1 {
 .light-preview svg {
   display: block;
   width: 100%;
-  max-width: 16rem;
+  max-width: 100%;
   height: auto;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 6px;
-}
-
-.light-preview .car-body {
-  fill: var(--bg);
-  stroke: var(--line);
-  stroke-width: 1.5;
-  stroke-linejoin: round;
 }
 
 .light-preview .headlight,

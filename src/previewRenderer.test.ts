@@ -9,22 +9,27 @@ const FIRST = 0;
 const HEADLIGHT = ".light-preview .headlight";
 const TURN = ".light-preview .turn-signal";
 const CAR_BODY = ".light-preview svg .car-body";
+const CAR_PHOTO = ".light-preview svg image.car-photo";
+const PHOTO_NAME = "tesla-model-3.jpg";
 
 afterEach(() => {
   document.body.replaceChildren();
 });
 
 describe("light preview", () => {
-  it("draws a car body behind the lights", () => {
+  it("uses a photo of the car instead of a drawn outline", () => {
     const view = mount();
-    const body = view.root.querySelector(CAR_BODY);
+    const photo = view.root.querySelector(CAR_PHOTO);
     const headlight = view.root.querySelector(HEADLIGHT);
 
-    expect(body).toBeInstanceOf(SVGElement);
-    if (!(body instanceof Element) || headlight === null) {
-      throw new Error("missing car body");
+    expect(view.root.querySelector(CAR_BODY)).toBeNull();
+    expect(photo).toBeInstanceOf(SVGElement);
+    if (!(photo instanceof Element) || headlight === null) {
+      throw new Error("missing car photo");
     }
-    const order = body.compareDocumentPosition(headlight);
+    const href = photo.getAttribute("href") ?? "";
+    expect(href).toContain(PHOTO_NAME);
+    const order = photo.compareDocumentPosition(headlight);
     expect(order & Node.DOCUMENT_POSITION_FOLLOWING).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
   });
 

@@ -102,7 +102,9 @@ Test files are not split at about 100–120 lines. Consider splitting one into s
 
 ## 2026-11-04 — The preview shows a car, not only dots
 
-The light preview drew four floating dots and no car. Jason expected a car, so the same SVG now has a simple front-view Model 3/Y outline, and the lights sit where they would on that face. It is an SVG path, not an image file, so there is nothing extra to load or break.
+The light preview drew floating dots and no car. Jason wanted it to look like a real Tesla, so the drawn outline was replaced with a photo of a 2023 Model 3, front-left, with the red lights overlaid on the lamps. The photo is bundled in the app instead of loaded from a remote URL, so the preview still works offline and the link cannot break.
+
+Photo: Kazyakuruma, CC0 1.0, https://commons.wikimedia.org/wiki/File:Tesla_Model_3_(2023),_long_range,_Japan,_left-front.jpg. CC0 does not require an on-screen credit.
 
 ## 2026-11-04 — ShowFlow is now LightShowGenerator
 
