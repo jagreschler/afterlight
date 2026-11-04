@@ -1,5 +1,5 @@
 import { HEADLIGHTS, TURN_SIGNALS } from "./channels";
-import { addBody, addLights, addPhoto, bundled, makeView, type PlacedLight } from "./previewDraw";
+import { addLights, addPhoto, bundled, makeView, type PlacedLight } from "./previewDraw";
 import {
   FRONT_HEADLIGHTS,
   FRONT_HEIGHT,
@@ -8,7 +8,7 @@ import {
   FRONT_WIDTH,
   TOP_HEADLIGHTS,
   TOP_HEIGHT,
-  TOP_OUTLINE,
+  TOP_PHOTO,
   TOP_TURNS,
   TOP_WIDTH,
 } from "./previewLayout";
@@ -16,7 +16,7 @@ import {
 const FULL = 255;
 const FRONT_RADIUS = 16;
 const TOP_RADIUS = 8;
-const CREDIT = "Front photo: iMoD Official, CC BY 3.0";
+const CREDIT = "Front: iMoD Official, CC BY 3.0. Top: Norio Nakayama, CC BY-SA 2.0.";
 
 export type LightPreview = {
   show(frame: Uint8Array): void;
@@ -30,7 +30,7 @@ export function mountPreviewRenderer(root: HTMLElement): LightPreview {
   addLights(lights, front, HEADLIGHTS, "headlight", FRONT_HEADLIGHTS, FRONT_RADIUS);
   addLights(lights, front, TURN_SIGNALS, "turn-signal", FRONT_TURNS, FRONT_RADIUS);
   const top = makeView("view-top", TOP_WIDTH, TOP_HEIGHT);
-  addBody(top, TOP_OUTLINE);
+  addPhoto(top, bundled(TOP_PHOTO), TOP_WIDTH, TOP_HEIGHT);
   addLights(lights, top, HEADLIGHTS, "headlight", TOP_HEADLIGHTS, TOP_RADIUS);
   addLights(lights, top, TURN_SIGNALS, "turn-signal", TOP_TURNS, TOP_RADIUS);
   const credit = document.createElement("p");

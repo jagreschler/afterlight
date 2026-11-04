@@ -5,36 +5,36 @@ export type Spot = {
 
 export const FRONT_PHOTO = "tesla-model-3-front.jpg";
 export const FRONT_WIDTH = 800;
-export const FRONT_HEIGHT = 373;
+export const FRONT_HEIGHT = 560;
 
-export const TOP_WIDTH = 160;
-export const TOP_HEIGHT = 360;
-export const TOP_OUTLINE =
-  "M48 36C48 14 112 14 112 36L128 78L128 268C128 324 114 346 80 346C46 346 32 324 32 268L32 78Z";
+export const TOP_PHOTO = "tesla-top.jpg";
+export const TOP_WIDTH = 640;
+export const TOP_HEIGHT = 582;
 
-// Looking at the front of the car, image-left is the car's right.
+// Front photo faces the camera. Image-left is the car's right.
 export const FRONT_HEADLIGHTS: Spot[] = [
-  { x: 410, y: 155 },
-  { x: 70, y: 162 },
-  { x: 330, y: 165 },
-  { x: 100, y: 155 },
+  { x: 390, y: 260 },
+  { x: 68, y: 268 },
+  { x: 330, y: 265 },
+  { x: 90, y: 258 },
 ];
 
 export const FRONT_TURNS: Spot[] = [
-  { x: 425, y: 172 },
-  { x: 68, y: 180 },
+  { x: 405, y: 278 },
+  { x: 66, y: 288 },
 ];
 
+// Overhead Roadster. The nose, with the grille, is at the bottom.
 export const TOP_HEADLIGHTS: Spot[] = [
-  { x: 48, y: 46 },
-  { x: 112, y: 46 },
-  { x: 62, y: 50 },
-  { x: 98, y: 50 },
+  { x: 310, y: 470 },
+  { x: 430, y: 500 },
+  { x: 340, y: 490 },
+  { x: 400, y: 510 },
 ];
 
 export const TOP_TURNS: Spot[] = [
-  { x: 36, y: 68 },
-  { x: 124, y: 68 },
-  { x: 40, y: 328 },
-  { x: 120, y: 328 },
+  { x: 290, y: 450 },
+  { x: 450, y: 480 },
+  { x: 440, y: 60 },
+  { x: 540, y: 85 },
 ];

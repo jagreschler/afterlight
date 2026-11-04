@@ -25,13 +25,6 @@ export function addPhoto(svg: SVGSVGElement, href: string, width: number, height
   svg.append(photo);
 }
 
-export function addBody(svg: SVGSVGElement, path: string): void {
-  const body = document.createElementNS(SVG_NS, "path");
-  body.setAttribute("class", "car-body");
-  body.setAttribute("d", path);
-  svg.append(body);
-}
-
 export function bundled(file: string): string {
   const base = import.meta.env.BASE_URL;
   const prefix = base.endsWith("/") ? base : `${base}/`;

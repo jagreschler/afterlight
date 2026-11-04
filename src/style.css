@@ -80,6 +80,7 @@ h1 {
 .light-preview {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
   gap: 0.75rem;
   width: 100%;
   margin-top: 0.25rem;
@@ -92,6 +93,7 @@ h1 {
 .view-front,
 .view-top {
   display: block;
+  flex: 1 1 100%;
   width: 100%;
   height: auto;
   background: var(--panel);
@@ -100,17 +102,15 @@ h1 {
 }
 
 @media (min-width: 48rem) {
-  .view-front,
-  .view-top {
-    width: calc(50% - 0.4rem);
+  .view-front {
+    flex: 1.15 1 16rem;
+    width: auto;
   }
-}
 
-.light-preview .car-body {
-  fill: var(--bg);
-  stroke: var(--line);
-  stroke-width: 2;
-  stroke-linejoin: round;
+  .view-top {
+    flex: 1 1 14rem;
+    width: auto;
+  }
 }
 
 .photo-credit {
