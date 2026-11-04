@@ -149,3 +149,7 @@ After an iTunes show is generated, the page saves a recipe: the song details nee
 ## 2026-11-04 — Name a value before passing it on
 
 Give a call its own named variable instead of nesting that call inside another call.
+
+## 2026-11-04 — Generate stays put when Download hides
+
+After a show is built, Generate and Download share a row under the options. Changing an option hides Download. The narrower button group then fit on the options row, so Generate jumped up. The button group now takes the full width of the row, so Generate stays in the same place.

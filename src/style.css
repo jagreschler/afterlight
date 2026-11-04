@@ -55,6 +55,7 @@ h1 {
 
 .show-actions {
   display: flex;
+  flex-basis: 100%;
   align-items: center;
   gap: 0.75rem;
 }
