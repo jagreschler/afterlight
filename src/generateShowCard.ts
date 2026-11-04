@@ -70,6 +70,10 @@ export class GenerateShowCard {
     save.hidden = true;
     this.download = save;
 
+    const actions = document.createElement("div");
+    actions.className = "show-actions";
+    actions.append(button, save);
+
     this.syncLights.addEventListener("change", () => {
       this.notifyOptionsEdited();
     });
@@ -80,7 +84,7 @@ export class GenerateShowCard {
       this.notifyOptionsEdited();
     });
 
-    this.root.replaceChildren(lengthLabel, startLabel, label, button, save);
+    this.root.replaceChildren(lengthLabel, startLabel, label, actions);
   }
 
   onEdit(hook: () => void): void {

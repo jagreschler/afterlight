@@ -129,3 +129,7 @@ The `package.json` version read now lives in one shared module. Both the Vite co
 ## 2026-11-04 — The page has a favicon
 
 The page was asking for a favicon and getting a 404. A small hand-written SVG light burst now sits in `public/`, and the page links it with `%BASE_URL%` so the icon resolves under the GitHub Pages path `/afterlight/`.
+
+## 2026-11-04 — Download sits beside Generate
+
+Download was showing below the preview, on the opposite corner from Generate. The preview sat between the two buttons, so the row wrapped and Download landed on the next line. Generate and Download now stay in one group, so they remain side by side when the row wraps, and the preview comes after that group. Download still appears only when the options match the generated show.

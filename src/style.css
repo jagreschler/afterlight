@@ -53,6 +53,12 @@ h1 {
   display: none;
 }
 
+.show-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .sync-lights,
 .show-length,
 .start-point {
