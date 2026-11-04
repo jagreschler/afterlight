@@ -386,7 +386,7 @@ function mount(
 }
 
 function buttonHidden(root: ParentNode, selector: string): boolean {
-  return showButton(root, selector).hidden;
+  return showButton(root, selector).hidden !== false;
 }
 
 function buttonDisabled(root: ParentNode, selector: string): boolean {
