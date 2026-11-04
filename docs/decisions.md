@@ -104,7 +104,7 @@ Test files are not split at about 100–120 lines. Consider splitting one into s
 
 The light preview shows two photographs, because one angled shot could not place every lamp. The front view is the repo owner's own photo of his Model 3, taken straight on and cropped around the car. No license credit is needed for that photo. It shows the four headlights plus the two front turn signals. The top view is a Tesla Roadster photographed from above. No freely licensed overhead photo of a Model 3 or Model Y turned up, and a Roadster is still a Tesla, so it carries all eight lights. The same channel drives the matching dot in both views. On a narrow screen the views stack; on a wide screen they sit side by side, aligned at the top so neither box is stretched. Both photos are bundled in the app, not loaded from a remote URL, so the preview works offline and the link cannot break.
 
-Top photo: Norio Nakayama, CC BY-SA 2.0, https://commons.wikimedia.org/wiki/File:Tesla_Roadster_Sport_top_view.jpg. That license required a short credit line under the preview. The earlier stock front photo is no longer used. The next entry replaces this overhead photo.
+The earlier stock front photo is no longer used. The next entry replaces this overhead photo.
 
 ## 2026-11-04 — ShowFlow is now LightShowGenerator
 
