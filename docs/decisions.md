@@ -133,3 +133,7 @@ The page was asking for a favicon and getting a 404. A small hand-written SVG li
 ## 2026-11-04 — Download sits beside Generate
 
 Download was showing below the preview, on the opposite corner from Generate. The preview sat between the two buttons, so the row wrapped and Download landed on the next line. Generate and Download now sit together. Generate stays visible so the actions are always clear. Before a show is built it is enabled and Download is hidden. Once a show is built for the current options, Generate is disabled and dimmed and Download appears beside it. Changing the length, the start time, sync, or the song enables Generate again at full brightness and hides Download.
+
+## 2026-11-04 — Search and upload stack
+
+On a wide screen the upload note sat beside the search box. The note is taller, and the row lined them up at the bottom, so the search field sat lower than the note. Search now comes first, and the note and Upload button sit under it, the same way they already do on a phone.
