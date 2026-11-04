@@ -33,6 +33,8 @@ const MID_SECONDS = 45;
 const LONG_SECONDS = 60;
 const UPLOAD_ID = 0;
 const LENGTH_LABEL = "Show length";
+const START_AT = 0;
+const START_LATER = 10;
 const PREVIEW_CHOICE = `${PREVIEW_SECONDS} s`;
 const MID_CHOICE = `${MID_SECONDS} s`;
 const LONG_CHOICE = `${LONG_SECONDS} s`;
@@ -172,10 +174,46 @@ describe("show flow", () => {
 
     expect(seen).toEqual([LONG_SECONDS, PREVIEW_SECONDS]);
   });
+
+  it("keeps the start time disabled at 0 for an iTunes preview", () => {
+    const view = mount();
+
+    view.flow.songSelected(song(FIRST_TITLE));
+
+    expect(view.start.disabled).toBe(true);
+    expect(view.start.value).toBe(String(START_AT));
+  });
+
+  it("starts an uploaded show at the chosen second", async () => {
+    const seen: Array<{ seconds: number; start: number }> = [];
+    const view = mount(async (_url, seconds, start) => {
+      seen.push({ seconds: seconds, start: start });
+      return readyPreview();
+    });
+
+    view.flow.songSelected(uploadedSong());
+    expect(view.start.disabled).toBe(false);
+    view.start.value = String(START_LATER);
+    view.length.value = String(PREVIEW_SECONDS);
+    view.generate.click();
+    await settle();
+
+    const uploaded = { seconds: PREVIEW_SECONDS, start: START_LATER };
+    expect(seen).toEqual([uploaded]);
+
+    view.flow.songSelected(song(FIRST_TITLE));
+    expect(view.start.disabled).toBe(true);
+    expect(view.start.value).toBe(String(START_AT));
+    view.generate.click();
+    await settle();
+
+    const preview = { seconds: PREVIEW_SECONDS, start: START_AT };
+    expect(seen).toEqual([uploaded, preview]);
+  });
 });
 
 function mount(
-  analyze?: (url: string, seconds: number) => Promise<AnalyzedPreview>,
+  analyze?: (url: string, seconds: number, start: number) => Promise<AnalyzedPreview>,
   download?: (name: string, bytes: Uint8Array) => void,
 ): {
   flow: ShowFlow;
@@ -183,6 +221,7 @@ function mount(
   generate: HTMLButtonElement;
   sync: HTMLInputElement;
   length: HTMLSelectElement;
+  start: HTMLInputElement;
 } {
   const root = document.createElement("div");
   document.body.append(root);
@@ -194,13 +233,23 @@ function mount(
   const generate = buttonNamed(root, GENERATE_LABEL);
   const sync = syncBox(root);
   const length = lengthBox(root);
+  const start = startBox(root);
   return {
     flow: flow,
     root: root,
     generate: generate,
     sync: sync,
     length: length,
+    start: start,
   };
+}
+
+function startBox(root: ParentNode): HTMLInputElement {
+  const input = root.querySelector(".start-point input");
+  if (!(input instanceof HTMLInputElement)) {
+    throw new Error("missing start point");
+  }
+  return input;
 }
 
 function lengthBox(root: ParentNode): HTMLSelectElement {

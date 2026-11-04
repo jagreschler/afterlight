@@ -1,6 +1,8 @@
 const SYNC_LABEL = "Sync all lights";
 const GENERATE_LABEL = "Generate & Download";
 const LENGTH_LABEL = "Show length";
+const START_LABEL = "Start at";
+const START_AT = 0;
 const PREVIEW_SECONDS = 30;
 const MID_SECONDS = 45;
 const LONG_SECONDS = 60;
@@ -10,6 +12,7 @@ export class GenerateShowCard {
   readonly sync: HTMLInputElement;
   readonly button: HTMLButtonElement;
   private readonly length: HTMLSelectElement;
+  private readonly start: HTMLInputElement;
   private readonly root: HTMLElement;
 
   constructor(root: HTMLElement) {
@@ -31,6 +34,18 @@ export class GenerateShowCard {
     }
     lengthLabel.append(lengthCaption, this.length);
 
+    const startLabel = document.createElement("label");
+    startLabel.className = "start-point";
+    const startCaption = document.createElement("span");
+    startCaption.textContent = START_LABEL;
+    this.start = document.createElement("input");
+    this.start.type = "number";
+    this.start.min = String(START_AT);
+    this.start.step = "1";
+    this.start.value = String(START_AT);
+    this.start.disabled = true;
+    startLabel.append(startCaption, this.start);
+
     const label = document.createElement("label");
     label.className = "sync-lights";
     this.sync = document.createElement("input");
@@ -45,7 +60,7 @@ export class GenerateShowCard {
     button.textContent = GENERATE_LABEL;
     this.button = button;
 
-    this.root.replaceChildren(lengthLabel, label, button);
+    this.root.replaceChildren(lengthLabel, startLabel, label, button);
   }
 
   show(): void {
@@ -55,14 +70,25 @@ export class GenerateShowCard {
   setUploaded(uploaded: boolean): void {
     if (uploaded) {
       this.length.disabled = false;
+      this.start.disabled = false;
       return;
     }
     this.length.value = String(PREVIEW_SECONDS);
     this.length.disabled = true;
+    this.start.value = String(START_AT);
+    this.start.disabled = true;
   }
 
   seconds(): number {
     return Number(this.length.value);
+  }
+
+  startSeconds(): number {
+    const start = Number(this.start.value);
+    if (!Number.isFinite(start) || start < START_AT) {
+      return START_AT;
+    }
+    return start;
   }
 
   setBusy(message: string): void {

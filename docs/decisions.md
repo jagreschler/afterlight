@@ -75,3 +75,7 @@ Apple previews are only 30 seconds. Next to search, the page can take a local au
 ## 2026-11-04 — Uploads can be 30, 45, or 60 seconds
 
 Apple previews are only 30 seconds, so the length choice stays disabled at 30 for a catalog song. An uploaded file, the song with no catalog id, can be 30, 45, or 60 seconds from the start. The same trim and analyze path builds the show. A file shorter than the choice is used whole. A start point comes later.
+
+## 2026-11-04 — An upload can start later in the song
+
+Apple previews stay a fixed 30 seconds from the beginning, so Start at stays disabled at 0. An uploaded file can start at a chosen second, then run for the chosen length. The same trim takes that window. If the window runs past the end of the file, the show uses whatever audio is left.
