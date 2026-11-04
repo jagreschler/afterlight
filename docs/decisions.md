@@ -86,4 +86,4 @@ This is a spike, not the finished preview. Later, Generate will animate a Tesla 
 
 ## 2026-11-04 — Generate and Download are separate
 
-The button now says Generate. It still analyzes the song and builds the zip, but it does not save the file. Download appears beside it only after that build. It stays visible while the song, length, start, and sync match that Generate, and hides when any of them differs. Changing a setting back shows it again, so there is no Reset button. The light preview will sit between those two steps.
+The button now says Generate. It still analyzes the song and builds the zip, but it does not save the file. Download appears beside it only after that build. It stays visible while the song, length, start, and sync match that Generate, and hides when any of them differs. Changing a setting back shows it again, so there is no Reset button. The light preview will sit between those two steps. The stored sync choice is named syncLights so it is clearly the Sync all lights option.

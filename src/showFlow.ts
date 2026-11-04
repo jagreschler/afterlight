@@ -11,11 +11,11 @@ import { GenerateShowCard } from "./generateShowCard";
 type GenerateHook = (mode: PulseMode, song: Song) => void;
 type AnalyzePreview = (url: string, seconds: number, start: number) => Promise<AnalyzedPreview>;
 type DownloadZip = (name: string, bytes: Uint8Array) => void;
-type BuiltShow = {
+export type BuiltShow = {
   previewUrl: string;
   seconds: number;
   start: number;
-  sync: boolean;
+  syncLights: boolean;
 };
 
 const SPLIT: PulseMode = "split";
@@ -68,6 +68,10 @@ export class ShowFlow {
     this.generateHooks.push(hook);
   }
 
+  builtShow(): BuiltShow | null {
+    return this.built;
+  }
+
   private async run(): Promise<void> {
     const song = this.song;
     if (song === null || this.busy) {
@@ -94,7 +98,7 @@ export class ShowFlow {
         previewUrl: song.previewUrl,
         seconds: seconds,
         start: start,
-        sync: synced,
+        syncLights: synced,
       };
       this.zipName = `${slug}.zip`;
       this.zipBytes = buildShowZip(slug, fseq, wav);
@@ -141,7 +145,7 @@ export class ShowFlow {
     if (this.card.startSeconds() !== built.start) {
       return false;
     }
-    return this.card.sync.checked === built.sync;
+    return this.card.sync.checked === built.syncLights;
   }
 
   private notify(mode: PulseMode, song: Song): void {

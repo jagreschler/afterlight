@@ -200,6 +200,17 @@ describe("show flow", () => {
     expect(downloads[0]?.name).toBe(UPLOAD_ZIP);
   });
 
+  it("stores Sync all lights as syncLights", async () => {
+    const view = mount(async () => readyPreview());
+    view.flow.songSelected(song(FIRST_TITLE));
+    view.sync.click();
+    view.generate.click();
+    await settle();
+
+    const stored = view.flow.builtShow();
+    expect(stored?.syncLights).toBe(CHECKED);
+  });
+
   it("keeps show length disabled at 30 seconds for an iTunes preview", () => {
     const view = mount();
 
