@@ -46,3 +46,8 @@ mountUploadSong(uploadRoot, chooseSong);
 preview.onTimeUpdate((currentTime) => {
   generator.follow(currentTime);
 });
+
+const appVersion = document.createElement("p");
+appVersion.className = "app-version";
+appVersion.textContent = `v${__APP_VERSION__}`;
+document.body.append(appVersion);

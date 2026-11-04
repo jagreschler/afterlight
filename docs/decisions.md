@@ -113,3 +113,7 @@ Renamed `ShowFlow` to `LightShowGenerator`, and `src/showFlow.ts` to `src/lightS
 ## 2026-11-04 — The overhead view is a Model 3 render
 
 The top view no longer uses the Roadster photo. It uses an AI-generated top-down Model 3 render, nose up, on a plain charcoal background, with no plate. Jason approved that render. No freely licensed overhead photo of a Model 3 or Model Y exists. The overhead render in the car's touchscreen is Tesla's artwork, so it cannot be bundled. The Roadster was the wrong car, and the dots on that photo missed the lamps. The render needs no credit line, so the credit element and its CSS are gone. The eight top dots sit on this render's headlights, front corners, and taillights.
+
+## 2026-11-04 — The page shows its version
+
+A small version number sits in a corner of the page so Jason can tell which build he is viewing. The number lives in one place, `package.json`. The build reads that field and shows it. Bump it with every change: a patch for fixes and small tweaks, and a minor for features.
