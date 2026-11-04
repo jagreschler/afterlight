@@ -15,8 +15,7 @@ import {
 
 const FULL = 255;
 const FRONT_RADIUS = 16;
-const TOP_RADIUS = 8;
-const CREDIT = "Top photo: Norio Nakayama, CC BY-SA 2.0.";
+const TOP_RADIUS = 6;
 
 export type LightPreview = {
   show(frame: Uint8Array): void;
@@ -33,10 +32,7 @@ export function mountPreviewRenderer(root: HTMLElement): LightPreview {
   addPhoto(top, bundled(TOP_PHOTO), TOP_WIDTH, TOP_HEIGHT);
   addLights(lights, top, HEADLIGHTS, "headlight", TOP_HEADLIGHTS, TOP_RADIUS);
   addLights(lights, top, TURN_SIGNALS, "turn-signal", TOP_TURNS, TOP_RADIUS);
-  const credit = document.createElement("p");
-  credit.className = "photo-credit";
-  credit.textContent = CREDIT;
-  root.replaceChildren(front, top, credit);
+  root.replaceChildren(front, top);
 
   return {
     show(frame: Uint8Array): void {
