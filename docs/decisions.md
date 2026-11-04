@@ -137,3 +137,7 @@ Download was showing below the preview, on the opposite corner from Generate. Th
 ## 2026-11-04 — Search and upload stack
 
 On a wide screen the upload note sat beside the search box. The note is taller, and the row lined them up at the bottom, so the search field sat lower than the note. Search now comes first, and the note and Upload button sit under it, the same way they already do on a phone.
+
+## 2026-11-04 — The front view is a render
+
+The front view is now an AI-generated studio render, matching the top view. It replaces the owner's real front photo, which was too distracting. The car sits smaller in the frame, so the front headlight and turn-signal dots were moved onto the rendered lamps. No credit line is needed.

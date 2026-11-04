@@ -11,15 +11,15 @@ export const TOP_HEIGHT = 640;
 
 // Front photo faces the camera. Image-left is the car's right.
 export const FRONT_HEADLIGHTS: Spot[] = [
-  { x: 690, y: 270 },
-  { x: 115, y: 270 },
-  { x: 635, y: 278 },
-  { x: 165, y: 278 },
+  { x: 655, y: 262 },
+  { x: 145, y: 262 },
+  { x: 632, y: 290 },
+  { x: 168, y: 290 },
 ];
 
 export const FRONT_TURNS: Spot[] = [
-  { x: 685, y: 295 },
-  { x: 120, y: 295 },
+  { x: 648, y: 308 },
+  { x: 152, y: 310 },
 ];
 
 // Overhead Model 3 render. The nose points up.
