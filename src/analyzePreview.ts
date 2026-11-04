@@ -1,4 +1,7 @@
 import { analyzeAudio, type AudioAnalysis } from "./analyzeAudio";
+import { trimToSeconds } from "./trimAudio";
+
+const PREVIEW_SECONDS = 30;
 
 export type DecodedPreview = {
   samples: Float32Array;
@@ -22,10 +25,11 @@ export async function analyzePreview(
 
   const bytes = await response.arrayBuffer();
   const preview = await decode(bytes);
-  const analysis = analyzeAudio(preview.samples, preview.sampleRate);
+  const samples = trimToSeconds(preview.samples, preview.sampleRate, PREVIEW_SECONDS);
+  const analysis = analyzeAudio(samples, preview.sampleRate);
   return {
     analysis: analysis,
-    samples: preview.samples,
+    samples: samples,
     sampleRate: preview.sampleRate,
   };
 }
