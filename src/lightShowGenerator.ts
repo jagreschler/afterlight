@@ -72,6 +72,12 @@ export class LightShowGenerator {
     this.card.notifyOptionsEdited();
   }
 
+  restore(song: Song, seconds: number, start: number, syncLights: boolean): void {
+    this.songSelected(song);
+    this.card.setOptions(seconds, start, syncLights);
+    void this.run();
+  }
+
   onGenerate(hook: GenerateHook): void {
     this.generateHooks.push(hook);
   }

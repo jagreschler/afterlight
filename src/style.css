@@ -159,6 +159,7 @@ h1 {
 .generate-button:focus-visible,
 .download-button:focus-visible,
 .search input:focus-visible,
+.recent-history button:focus-visible,
 .upload-button:focus-within,
 .results button:focus-visible,
 .preview button:focus-visible {
@@ -172,6 +173,41 @@ h1 {
 
 .upload-song {
   margin-top: 0.75rem;
+}
+
+.recent-history {
+  margin-top: 1.25rem;
+}
+
+.recent-history[hidden] {
+  display: none;
+}
+
+.recent-history .recent-label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.recent-history button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.recent-history .recent-artist {
+  color: var(--muted);
+  font-size: 0.85rem;
 }
 
 .search {

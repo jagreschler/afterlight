@@ -27,12 +27,14 @@ function page(): HTMLElement {
   const upload = document.createElement("div");
   const card = document.createElement("div");
   const preview = document.createElement("div");
+  const recent = document.createElement("div");
   const generate = document.createElement("div");
   search.id = "search";
   upload.id = "upload";
+  recent.id = "recent";
   card.id = "selected-song";
   preview.id = "preview";
   generate.id = "generate";
-  main.append(search, upload, card, preview, generate);
+  main.append(search, upload, recent, card, preview, generate);
   return main;
 }

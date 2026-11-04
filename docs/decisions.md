@@ -141,3 +141,7 @@ On a wide screen the upload note sat beside the search box. The note is taller, 
 ## 2026-11-04 — The front view is a render
 
 The front view is now an AI-generated studio render, matching the top view. It replaces the owner's real front photo, which was too distracting. The car sits smaller in the frame, so the front headlight and turn-signal dots were moved onto the rendered lamps. No credit line is needed.
+
+## 2026-11-04 — Recent history saves a recipe
+
+After an iTunes show is generated, the page saves a recipe: the song details needed to fetch the preview again, plus the chosen options. It does not save the generated files, and it does not save uploaded songs, because those files cannot be kept in the browser. The five newest recipes are shown, newest first. Generating the same song with the same options moves that recipe to the top. Clicking one restores the song and options and generates the show again. The list stays hidden when it is empty. If storage is missing or the saved data is bad, history is empty.

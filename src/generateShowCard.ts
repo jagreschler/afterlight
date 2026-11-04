@@ -123,6 +123,13 @@ export class GenerateShowCard {
     this.start.disabled = true;
   }
 
+  setOptions(seconds: number, start: number, syncLights: boolean): void {
+    this.length.value = String(seconds);
+    this.start.value = String(start);
+    this.syncLights.checked = syncLights;
+    this.notifyOptionsEdited();
+  }
+
   seconds(): number {
     return Number(this.length.value);
   }
