@@ -2,7 +2,7 @@ import type { Song } from "./itunes";
 import { searchSongs } from "./itunes";
 import { mountPreviewPlayer } from "./previewPlayer";
 import { mountSearchBar } from "./searchBar";
-import { mountShowFlow } from "./showFlow";
+import { mountLightShowGenerator } from "./lightShowGenerator";
 import { mountSongCard } from "./songCard";
 import { mountUploadSong } from "./uploadSong";
 
@@ -28,14 +28,14 @@ if (!(previewRoot instanceof HTMLElement)) {
   throw new Error("Afterlight is missing its #preview element.");
 }
 
-const flow = mountShowFlow(generateRoot);
+const generator = mountLightShowGenerator(generateRoot);
 const card = mountSongCard(cardRoot);
 const preview = mountPreviewPlayer(previewRoot);
 
 function chooseSong(song: Song): void {
   card.show(song);
   preview.load(song.previewUrl);
-  flow.songSelected(song);
+  generator.songSelected(song);
 }
 
 mountSearchBar(searchRoot, {
@@ -44,5 +44,5 @@ mountSearchBar(searchRoot, {
 });
 mountUploadSong(uploadRoot, chooseSong);
 preview.onTimeUpdate((currentTime) => {
-  flow.follow(currentTime);
+  generator.follow(currentTime);
 });

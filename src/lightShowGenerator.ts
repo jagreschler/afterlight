@@ -29,7 +29,7 @@ const READY = "Generate";
 const UPLOAD_TRACK_ID = 0;
 const FRAME_MS = 20;
 
-export class ShowFlow {
+export class LightShowGenerator {
   lightShow: Uint8Array[] | null = null;
   private readonly generateHooks: GenerateHook[] = [];
   private readonly card: GenerateShowCard;
@@ -192,12 +192,12 @@ export class ShowFlow {
   }
 }
 
-export function mountShowFlow(
+export function mountLightShowGenerator(
   root: HTMLElement,
   analyze: AnalyzePreview = analyzePreview,
   download: DownloadZip = downloadFile,
-): ShowFlow {
-  return new ShowFlow(root, analyze, download);
+): LightShowGenerator {
+  return new LightShowGenerator(root, analyze, download);
 }
 
 function modeFromSync(checked: boolean): PulseMode {

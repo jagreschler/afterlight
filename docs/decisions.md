@@ -94,8 +94,12 @@ After Generate succeeds, the page shows the SVG light picture from the spike, pa
 
 ## 2026-11-04 — The light preview follows the preview player
 
-The light preview now animates in step with the song. `main.ts` passes each audio `timeupdate`'s `currentTime` to `ShowFlow.follow`, which uses `frameAt` to pick the frame: subtract the chosen start, then step in 20 ms frames, and clamp to the first or last frame. On pause no `timeupdate` fires, so the lights hold. The preview player is the audio element Play controls, and it plays the whole file, so the start offset has to come out of the playback time.
+The light preview now animates in step with the song. `main.ts` passes each audio `timeupdate`'s `currentTime` to `LightShowGenerator.follow`, which uses `frameAt` to pick the frame: subtract the chosen start, then step in 20 ms frames, and clamp to the first or last frame. On pause no `timeupdate` fires, so the lights hold. The preview player is the audio element Play controls, and it plays the whole file, so the start offset has to come out of the playback time.
 
 ## 2026-11-04 — Test files can stay longer than source files
 
 Test files are not split at about 100–120 lines. Consider splitting one into specific test areas only around 200–400 lines. The about-100-line limit is for source files. That is why `src/previewSync.test.ts` (118 lines) stays one file.
+
+## 2026-11-04 — ShowFlow is now LightShowGenerator
+
+Renamed `ShowFlow` to `LightShowGenerator`, and `src/showFlow.ts` to `src/lightShowGenerator.ts`. The old name was vague. The class builds a light show from a song. This is a rename only. Nothing about how a show is built changed.
