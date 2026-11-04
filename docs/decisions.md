@@ -79,3 +79,7 @@ Apple previews are only 30 seconds, so the length choice stays disabled at 30 fo
 ## 2026-11-04 — An upload can start later in the song
 
 Apple previews stay a fixed 30 seconds from the beginning, so Start at stays disabled at 0. An uploaded file can start at a chosen second, then run for the chosen length. The same trim takes that window. If the window runs past the end of the file, the show uses whatever audio is left.
+
+## 2026-11-04 — Light preview spike uses SVG
+
+This is a spike, not the finished preview. Later, Generate will animate a Tesla picture in time with the song. SVG wins over canvas: the show only drives a handful of headlights and turn signals, each one is a shape in the page, and a test can read whether that shape is on. Canvas would need a bitmap or a fake drawing context, which the test DOM does not provide. Changing a few opacities every 20 ms is cheap, and the picture scales with the page. The spike is not wired into the page yet.
