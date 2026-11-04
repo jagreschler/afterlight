@@ -199,7 +199,8 @@ describe("light show generator", () => {
     view.generate.click();
     await settle();
 
-    expect(view.generate.disabled).toBe(false);
+    expect(view.generate.disabled).toBe(DISABLED);
+    expect(view.generate.hidden).toBe(SHOWN);
     expect(view.generate.textContent).toBe(GENERATE_LABEL);
     expect(view.download.hidden).toBe(SHOWN);
     expect(view.download.textContent).toBe(DOWNLOAD_LABEL);

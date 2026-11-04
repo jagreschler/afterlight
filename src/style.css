@@ -134,6 +134,11 @@ h1 {
   fill: var(--red);
 }
 
+.generate-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
 .generate-button,
 .download-button {
   width: auto;

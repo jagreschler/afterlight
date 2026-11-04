@@ -99,12 +99,12 @@ export class GenerateShowCard {
 
   showDownload(): void {
     this.download.hidden = false;
-    this.button.hidden = true;
+    this.button.disabled = true;
   }
 
   hideDownload(): void {
     this.download.hidden = true;
-    this.button.hidden = false;
+    this.button.disabled = false;
   }
 
   show(): void {
@@ -136,9 +136,9 @@ export class GenerateShowCard {
   }
 
   setBusy(message: string): void {
+    this.hideDownload();
     this.button.disabled = true;
     this.button.textContent = message;
-    this.hideDownload();
   }
 
   setReady(label: string): void {
