@@ -11,7 +11,8 @@ const TURN = ".light-preview .turn-signal";
 const FRONT = ".light-preview .view-front";
 const TOP = ".light-preview .view-top";
 const FRONT_PHOTO = "tesla-model-3-front.jpg";
-const TOP_PHOTO = "tesla-top.jpg";
+const TOP_PHOTO = "tesla-model-3-top.jpg";
+const TOP_VIEWBOX = "0 0 480 640";
 const HEADLIGHT_COUNT = 4;
 const FRONT_TURNS = 2;
 const ALL_TURNS = 4;
@@ -54,7 +55,8 @@ describe("light preview", () => {
       throw new Error("missing top photo");
     }
     const topHref = topPhoto.getAttribute("href") ?? "";
-    expect(topHref).toContain(TOP_PHOTO);
+    expect(topHref.endsWith(TOP_PHOTO)).toBe(true);
+    expect(top.getAttribute("viewBox")).toBe(TOP_VIEWBOX);
     expect(top.querySelector(".car-body")).toBeNull();
     expect(top.querySelectorAll(".headlight")).toHaveLength(HEADLIGHT_COUNT);
     expect(top.querySelectorAll(".turn-signal")).toHaveLength(ALL_TURNS);
@@ -67,10 +69,7 @@ describe("light preview", () => {
     expect(opacity(front, ".headlight")).toBe(LIT);
     expect(opacity(top, ".headlight")).toBe(LIT);
 
-    const credit = view.root.querySelector(".photo-credit");
-    const creditText = credit?.textContent ?? "";
-    expect(creditText).not.toContain("iMoD");
-    expect(creditText).toContain("Norio Nakayama");
+    expect(view.root.querySelector(".photo-credit")).toBeNull();
   });
 
   it("turns a headlight on for one frame and off for the next", () => {
