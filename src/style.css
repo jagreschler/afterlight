@@ -77,6 +77,30 @@ h1 {
   accent-color: var(--red);
 }
 
+.light-preview {
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+.light-preview[hidden] {
+  display: none;
+}
+
+.light-preview svg {
+  display: block;
+  width: 100%;
+  max-width: 16rem;
+  height: auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.light-preview .headlight,
+.light-preview .turn-signal {
+  fill: var(--red);
+}
+
 .generate-button,
 .download-button {
   width: auto;
