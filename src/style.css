@@ -96,6 +96,13 @@ h1 {
   border-radius: 6px;
 }
 
+.light-preview .car-body {
+  fill: var(--bg);
+  stroke: var(--line);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
 .light-preview .headlight,
 .light-preview .turn-signal {
   fill: var(--red);

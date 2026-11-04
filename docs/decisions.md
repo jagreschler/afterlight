@@ -100,6 +100,10 @@ The light preview now animates in step with the song. `main.ts` passes each audi
 
 Test files are not split at about 100–120 lines. Consider splitting one into specific test areas only around 200–400 lines. The about-100-line limit is for source files. That is why `src/previewSync.test.ts` (118 lines) stays one file.
 
+## 2026-11-04 — The preview shows a car, not only dots
+
+The light preview drew four floating dots and no car. Jason expected a car, so the same SVG now has a simple front-view Model 3/Y outline, and the lights sit where they would on that face. It is an SVG path, not an image file, so there is nothing extra to load or break.
+
 ## 2026-11-04 — ShowFlow is now LightShowGenerator
 
 Renamed `ShowFlow` to `LightShowGenerator`, and `src/showFlow.ts` to `src/lightShowGenerator.ts`. The old name was vague. The class builds a light show from a song. This is a rename only. Nothing about how a show is built changed.

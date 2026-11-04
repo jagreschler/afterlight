@@ -1,12 +1,30 @@
+import { CAR_OUTLINE } from "./carOutline";
 import { HEADLIGHTS, TURN_SIGNALS } from "./channels";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 const FULL = 255;
 const VIEW_WIDTH = 120;
-const VIEW_HEIGHT = 48;
-const RADIUS = 6;
-const LEFT = 16;
-const COLUMN = 28;
+const VIEW_HEIGHT = 90;
+const RADIUS = 4;
+
+type Spot = {
+  x: number;
+  y: number;
+};
+
+const HEADLIGHT_SPOTS: Spot[] = [
+  { x: 32, y: 44 },
+  { x: 88, y: 44 },
+  { x: 44, y: 46 },
+  { x: 76, y: 46 },
+];
+
+const TURN_SPOTS: Spot[] = [
+  { x: 22, y: 56 },
+  { x: 98, y: 56 },
+  { x: 28, y: 74 },
+  { x: 92, y: 74 },
+];
 
 type PlacedLight = {
   channel: number;
@@ -21,9 +39,10 @@ export function mountPreviewRenderer(root: HTMLElement): LightPreview {
   root.classList.add("light-preview");
   const svg = document.createElementNS(SVG_NS, "svg");
   svg.setAttribute("viewBox", `0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`);
+  addCarBody(svg);
   const lights: PlacedLight[] = [];
-  addLights(lights, svg, HEADLIGHTS, "headlight", 14);
-  addLights(lights, svg, TURN_SIGNALS, "turn-signal", 34);
+  addLights(lights, svg, HEADLIGHTS, "headlight", HEADLIGHT_SPOTS);
+  addLights(lights, svg, TURN_SIGNALS, "turn-signal", TURN_SPOTS);
   root.replaceChildren(svg);
 
   return {
@@ -36,22 +55,30 @@ export function mountPreviewRenderer(root: HTMLElement): LightPreview {
   };
 }
 
+function addCarBody(svg: SVGSVGElement): void {
+  const body = document.createElementNS(SVG_NS, "path");
+  body.setAttribute("class", "car-body");
+  body.setAttribute("d", CAR_OUTLINE);
+  svg.append(body);
+}
+
 function addLights(
   lights: PlacedLight[],
   svg: SVGSVGElement,
   channels: readonly number[],
   kind: string,
-  y: number,
+  spots: readonly Spot[],
 ): void {
   for (let index = 0; index < channels.length; index += 1) {
     const channel = channels[index];
-    if (channel === undefined) {
+    const spot = spots[index];
+    if (channel === undefined || spot === undefined) {
       continue;
     }
     const shape = document.createElementNS(SVG_NS, "circle");
     shape.setAttribute("class", kind);
-    shape.setAttribute("cx", String(LEFT + index * COLUMN));
-    shape.setAttribute("cy", String(y));
+    shape.setAttribute("cx", String(spot.x));
+    shape.setAttribute("cy", String(spot.y));
     shape.setAttribute("r", String(RADIUS));
     shape.setAttribute("opacity", "0");
     svg.append(shape);
