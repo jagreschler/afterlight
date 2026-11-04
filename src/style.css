@@ -77,7 +77,8 @@ h1 {
   accent-color: var(--red);
 }
 
-.generate-button {
+.generate-button,
+.download-button {
   width: auto;
   min-height: var(--tap);
   padding: 0.5rem 1rem;
@@ -94,6 +95,7 @@ h1 {
 .show-length select:focus-visible,
 .start-point input:focus-visible,
 .generate-button:focus-visible,
+.download-button:focus-visible,
 .search input:focus-visible,
 .upload-button:focus-within,
 .results button:focus-visible,

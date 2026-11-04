@@ -1,5 +1,6 @@
 const SYNC_LABEL = "Sync all lights";
-const GENERATE_LABEL = "Generate & Download";
+const GENERATE_LABEL = "Generate";
+const DOWNLOAD_LABEL = "Download";
 const LENGTH_LABEL = "Show length";
 const START_LABEL = "Start at";
 const START_AT = 0;
@@ -11,9 +12,11 @@ const LENGTH_SECONDS = [PREVIEW_SECONDS, MID_SECONDS, LONG_SECONDS];
 export class GenerateShowCard {
   readonly sync: HTMLInputElement;
   readonly button: HTMLButtonElement;
+  readonly download: HTMLButtonElement;
   private readonly length: HTMLSelectElement;
   private readonly start: HTMLInputElement;
   private readonly root: HTMLElement;
+  private edited: (() => void) | null = null;
 
   constructor(root: HTMLElement) {
     this.root = root;
@@ -60,7 +63,39 @@ export class GenerateShowCard {
     button.textContent = GENERATE_LABEL;
     this.button = button;
 
-    this.root.replaceChildren(lengthLabel, startLabel, label, button);
+    const save = document.createElement("button");
+    save.type = "button";
+    save.className = "download-button";
+    save.textContent = DOWNLOAD_LABEL;
+    save.hidden = true;
+    this.download = save;
+
+    this.sync.addEventListener("change", () => {
+      this.markStale();
+    });
+    this.length.addEventListener("change", () => {
+      this.markStale();
+    });
+    this.start.addEventListener("input", () => {
+      this.markStale();
+    });
+
+    this.root.replaceChildren(lengthLabel, startLabel, label, button, save);
+  }
+
+  onEdit(hook: () => void): void {
+    this.edited = hook;
+  }
+
+  markStale(): void {
+    this.download.hidden = true;
+    if (this.edited !== null) {
+      this.edited();
+    }
+  }
+
+  showDownload(): void {
+    this.download.hidden = false;
   }
 
   show(): void {
@@ -94,6 +129,7 @@ export class GenerateShowCard {
   setBusy(message: string): void {
     this.button.disabled = true;
     this.button.textContent = message;
+    this.download.hidden = true;
   }
 
   setReady(label: string): void {
@@ -104,5 +140,6 @@ export class GenerateShowCard {
   setFailed(message: string): void {
     this.button.disabled = false;
     this.button.textContent = message;
+    this.download.hidden = true;
   }
 }

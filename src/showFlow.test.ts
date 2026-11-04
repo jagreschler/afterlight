@@ -5,7 +5,8 @@ import type { AnalyzedPreview } from "./analyzePreview";
 import type { Song } from "./itunes";
 import { mountShowFlow, ShowFlow } from "./showFlow";
 
-const GENERATE_LABEL = "Generate & Download";
+const GENERATE_LABEL = "Generate";
+const DOWNLOAD_LABEL = "Download";
 const SYNC_LABEL = "Sync all lights";
 const HIDDEN = true;
 const SHOWN = false;
@@ -117,20 +118,28 @@ describe("show flow", () => {
     expect(view.generate.disabled).toBe(false);
     expect(view.generate.textContent).toBe(FAILED);
     expect(view.flow.lightShow).toBeNull();
+    expect(view.download.hidden).toBe(HIDDEN);
   });
 
-  it("downloads a zip of the slug-named show files", async () => {
+  it("builds the show on Generate and saves the zip only from Download", async () => {
     const downloads: Array<{ name: string; bytes: Uint8Array }> = [];
     const view = mount(async () => readyPreview(), (name, bytes) => {
       downloads.push({ name: name, bytes: bytes });
     });
     view.flow.songSelected(song(FIRST_TITLE));
+    expect(view.download.hidden).toBe(HIDDEN);
 
     view.generate.click();
     await settle();
 
     expect(view.generate.disabled).toBe(false);
     expect(view.generate.textContent).toBe(GENERATE_LABEL);
+    expect(view.download.hidden).toBe(SHOWN);
+    expect(view.download.textContent).toBe(DOWNLOAD_LABEL);
+    expect(downloads).toHaveLength(0);
+
+    view.download.click();
+
     expect(downloads).toHaveLength(1);
     const saved = downloads[0];
     expect(saved?.name).toBe(ZIP_NAME);
@@ -138,6 +147,34 @@ describe("show flow", () => {
     expect(sortedNames(files)).toEqual([FSEQ_NAME, NOTE_NAME, WAV_NAME].sort());
     expect(text(files[FSEQ_NAME], 0, 4)).toBe("PSEQ");
     expect(text(files[WAV_NAME], 0, 4)).toBe("RIFF");
+  });
+
+  it("hides Download when the song or the show settings change", async () => {
+    const view = mount(async () => readyPreview());
+    view.flow.songSelected(uploadedSong());
+    view.generate.click();
+    await settle();
+    expect(view.download.hidden).toBe(SHOWN);
+
+    view.sync.click();
+    expect(view.download.hidden).toBe(HIDDEN);
+
+    view.generate.click();
+    await settle();
+    view.length.value = String(LONG_SECONDS);
+    view.length.dispatchEvent(new Event("change"));
+    expect(view.download.hidden).toBe(HIDDEN);
+
+    view.generate.click();
+    await settle();
+    view.start.value = String(START_LATER);
+    view.start.dispatchEvent(new Event("input"));
+    expect(view.download.hidden).toBe(HIDDEN);
+
+    view.generate.click();
+    await settle();
+    view.flow.songSelected(song(FIRST_TITLE));
+    expect(view.download.hidden).toBe(HIDDEN);
   });
 
   it("keeps show length disabled at 30 seconds for an iTunes preview", () => {
@@ -214,7 +251,7 @@ describe("show flow", () => {
 
 function mount(
   analyze?: (url: string, seconds: number, start: number) => Promise<AnalyzedPreview>,
-  download?: (name: string, bytes: Uint8Array) => void,
+  saveZip?: (name: string, bytes: Uint8Array) => void,
 ): {
   flow: ShowFlow;
   root: HTMLElement;
@@ -222,18 +259,20 @@ function mount(
   sync: HTMLInputElement;
   length: HTMLSelectElement;
   start: HTMLInputElement;
+  download: HTMLButtonElement;
 } {
   const root = document.createElement("div");
   document.body.append(root);
-  const flow = download === undefined
+  const flow = saveZip === undefined
     ? analyze === undefined
       ? mountShowFlow(root)
       : mountShowFlow(root, analyze)
-    : mountShowFlow(root, analyze ?? (async () => readyPreview()), download);
+    : mountShowFlow(root, analyze ?? (async () => readyPreview()), saveZip);
   const generate = buttonNamed(root, GENERATE_LABEL);
   const sync = syncBox(root);
   const length = lengthBox(root);
   const start = startBox(root);
+  const download = downloadButton(root);
   return {
     flow: flow,
     root: root,
@@ -241,7 +280,16 @@ function mount(
     sync: sync,
     length: length,
     start: start,
+    download: download,
   };
+}
+
+function downloadButton(root: ParentNode): HTMLButtonElement {
+  const button = root.querySelector(".download-button");
+  if (!(button instanceof HTMLButtonElement)) {
+    throw new Error("missing download button");
+  }
+  return button;
 }
 
 function startBox(root: ParentNode): HTMLInputElement {

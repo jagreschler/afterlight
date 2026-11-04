@@ -83,3 +83,7 @@ Apple previews stay a fixed 30 seconds from the beginning, so Start at stays dis
 ## 2026-11-04 — Light preview spike uses SVG
 
 This is a spike, not the finished preview. Later, Generate will animate a Tesla picture in time with the song. SVG wins over canvas: the show only drives a handful of headlights and turn signals, each one is a shape in the page, and a test can read whether that shape is on. Canvas would need a bitmap or a fake drawing context, which the test DOM does not provide. Changing a few opacities every 20 ms is cheap, and the picture scales with the page. The spike is not wired into the page yet.
+
+## 2026-11-04 — Generate and Download are separate
+
+The button now says Generate. It still analyzes the song and builds the zip, but it does not save the file. Download appears beside it only after that build, and it hides again if the song, length, start, or sync choice changes. The light preview will sit between those two steps.

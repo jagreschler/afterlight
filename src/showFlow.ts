@@ -17,7 +17,7 @@ const TOGETHER: PulseMode = "together";
 const ANALYZING = "Analyzing song…";
 const BUILDING = "Building light show…";
 const FAILED = "Couldn't build the light show.";
-const READY = "Generate & Download";
+const READY = "Generate";
 const UPLOAD_TRACK_ID = 0;
 
 export class ShowFlow {
@@ -28,6 +28,9 @@ export class ShowFlow {
   private readonly download: DownloadZip;
   private song: Song | null = null;
   private busy = false;
+  private edition = 0;
+  private zipName = "";
+  private zipBytes: Uint8Array | null = null;
 
   constructor(
     root: HTMLElement,
@@ -37,8 +40,15 @@ export class ShowFlow {
     this.analyze = analyze;
     this.download = download;
     this.card = new GenerateShowCard(root);
+    this.card.onEdit(() => {
+      this.edition += 1;
+      this.zipBytes = null;
+    });
     this.card.button.addEventListener("click", () => {
       void this.run();
+    });
+    this.card.download.addEventListener("click", () => {
+      this.save();
     });
   }
 
@@ -46,6 +56,7 @@ export class ShowFlow {
     this.song = song;
     this.card.setUploaded(song.trackId === UPLOAD_TRACK_ID);
     this.card.show();
+    this.card.markStale();
   }
 
   onGenerate(hook: GenerateHook): void {
@@ -59,6 +70,7 @@ export class ShowFlow {
     }
 
     this.busy = true;
+    const edition = this.edition;
     const mode = modeFromSync(this.card.sync.checked);
     this.card.setBusy(ANALYZING);
     try {
@@ -71,15 +83,29 @@ export class ShowFlow {
       const slug = showSlug(song.artistName, song.trackName);
       const fseq = writeFseq(frames);
       const wav = writeWav([prepared.samples], prepared.sampleRate);
-      this.download(`${slug}.zip`, buildShowZip(slug, fseq, wav));
+      this.zipName = `${slug}.zip`;
+      this.zipBytes = buildShowZip(slug, fseq, wav);
       this.card.setReady(READY);
+      if (edition === this.edition) {
+        this.card.showDownload();
+      } else {
+        this.zipBytes = null;
+      }
       this.notify(mode, song);
     } catch {
       this.lightShow = null;
+      this.zipBytes = null;
       this.card.setFailed(FAILED);
     } finally {
       this.busy = false;
     }
+  }
+
+  private save(): void {
+    if (this.zipBytes === null) {
+      return;
+    }
+    this.download(this.zipName, this.zipBytes);
   }
 
   private notify(mode: PulseMode, song: Song): void {
