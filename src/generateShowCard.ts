@@ -99,10 +99,12 @@ export class GenerateShowCard {
 
   showDownload(): void {
     this.download.hidden = false;
+    this.button.hidden = true;
   }
 
   hideDownload(): void {
     this.download.hidden = true;
+    this.button.hidden = false;
   }
 
   show(): void {

@@ -132,4 +132,4 @@ The page was asking for a favicon and getting a 404. A small hand-written SVG li
 
 ## 2026-11-04 — Download sits beside Generate
 
-Download was showing below the preview, on the opposite corner from Generate. The preview sat between the two buttons, so the row wrapped and Download landed on the next line. Generate and Download now stay in one group, so they remain side by side when the row wraps, and the preview comes after that group. Download still appears only when the options match the generated show.
+Download was showing below the preview, on the opposite corner from Generate. The preview sat between the two buttons, so the row wrapped and Download landed on the next line. Generate and Download now share one spot. Generate is shown until a show is built for the current options. Once it is built and the options are unchanged, Generate hides and Download takes its place. Changing the length, the start time, sync, or the song hides Download and shows Generate again. Both at once made no sense.
