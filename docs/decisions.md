@@ -145,3 +145,7 @@ The front view is now an AI-generated studio render, matching the top view. It r
 ## 2026-11-04 — Recent history saves a recipe
 
 After an iTunes show is generated, the page saves a recipe: the song details needed to fetch the preview again, plus the chosen options. It does not save the generated files, and it does not save uploaded songs, because those files cannot be kept in the browser. The five newest recipes are shown, newest first. Generating the same song with the same options moves that recipe to the top. Clicking one restores the song and options and generates the show again. The list stays hidden when it is empty. If storage is missing or the saved data is bad, history is empty.
+
+## 2026-11-04 — Name a value before passing it on
+
+Give a call its own named variable instead of nesting that call inside another call.

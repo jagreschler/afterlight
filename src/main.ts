@@ -49,7 +49,8 @@ mountSearchBar(searchRoot, {
   onSelect: chooseSong,
 });
 mountUploadSong(uploadRoot, chooseSong);
-const recent = mountRecentHistory(recentRoot, loadRecipes(localStorage), replay);
+const savedRecipes = loadRecipes(localStorage);
+const recent = mountRecentHistory(recentRoot, savedRecipes, replay);
 generator.onGenerate((_mode, song) => {
   const built = generator.builtShow();
   if (built === null) {
@@ -59,7 +60,8 @@ generator.onGenerate((_mode, song) => {
   if (recipe === null) {
     return;
   }
-  recent.show(rememberRecipe(localStorage, recipe));
+  const recentRecipes = rememberRecipe(localStorage, recipe);
+  recent.show(recentRecipes);
 });
 preview.onTimeUpdate((currentTime) => {
   generator.follow(currentTime);

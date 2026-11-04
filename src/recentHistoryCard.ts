@@ -33,7 +33,8 @@ function show(root: HTMLElement, recipes: Recipe[], onPick: (recipe: Recipe) => 
   label.textContent = LABEL;
   root.append(label);
   for (const recipe of recipes) {
-    root.append(buttonFor(recipe, onPick));
+    const button = buttonFor(recipe, onPick);
+    root.append(button);
   }
 }
 

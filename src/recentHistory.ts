@@ -17,7 +17,8 @@ export type RecipeStore = {
 
 export function loadRecipes(store: RecipeStore): Recipe[] {
   try {
-    return recipesFrom(store.getItem(STORAGE_KEY));
+    const raw = store.getItem(STORAGE_KEY);
+    return recipesFrom(raw);
   } catch {
     return [];
   }
@@ -33,7 +34,8 @@ export function rememberRecipe(store: RecipeStore, recipe: Recipe): Recipe[] {
   }
   const kept = next.slice(0, LIMIT);
   try {
-    store.setItem(STORAGE_KEY, JSON.stringify(kept));
+    const saved = JSON.stringify(kept);
+    store.setItem(STORAGE_KEY, saved);
   } catch {
     return current;
   }
