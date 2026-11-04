@@ -112,6 +112,7 @@ describe("light show generator", () => {
     expect(view.generate.hidden).toBe(SHOWN);
     expect(view.generate.textContent).toBe(GENERATE_LABEL);
     expect(view.download.hidden).toBe(SHOWN);
+    expect(view.download.disabled).toBe(ENABLED);
     expect(view.generator.lightShow).toHaveLength(ONE_FRAME);
   });
 
@@ -127,7 +128,8 @@ describe("light show generator", () => {
     expect(view.generate.disabled).toBe(false);
     expect(view.generate.textContent).toBe(FAILED);
     expect(view.generator.lightShow).toBeNull();
-    expect(view.download.hidden).toBe(HIDDEN);
+    expect(view.download.hidden).toBe(SHOWN);
+    expect(view.download.disabled).toBe(DISABLED);
   });
 
   it("puts Download beside Generate", () => {
@@ -144,13 +146,14 @@ describe("light show generator", () => {
     expect(generate.nextElementSibling).toBe(download);
   });
 
-  it("shows an enabled Generate and no Download before a show is built", () => {
+  it("shows an enabled Generate and a disabled Download before a show is built", () => {
     const view = mount();
     view.generator.songSelected(song(FIRST_TITLE));
 
     expect(buttonHidden(view.root, GENERATE_BUTTON)).toBe(SHOWN);
     expect(buttonDisabled(view.root, GENERATE_BUTTON)).toBe(ENABLED);
-    expect(buttonHidden(view.root, DOWNLOAD_BUTTON)).toBe(HIDDEN);
+    expect(buttonHidden(view.root, DOWNLOAD_BUTTON)).toBe(SHOWN);
+    expect(buttonDisabled(view.root, DOWNLOAD_BUTTON)).toBe(DISABLED);
   });
 
   it("keeps Generate visible but disabled and shows Download after Generate", async () => {
@@ -162,18 +165,25 @@ describe("light show generator", () => {
     expect(buttonHidden(view.root, GENERATE_BUTTON)).toBe(SHOWN);
     expect(buttonDisabled(view.root, GENERATE_BUTTON)).toBe(DISABLED);
     expect(buttonHidden(view.root, DOWNLOAD_BUTTON)).toBe(SHOWN);
+    expect(buttonDisabled(view.root, DOWNLOAD_BUTTON)).toBe(ENABLED);
   });
 
-  it("enables Generate and hides Download after an option changes", async () => {
+  it("disables Download when options change and enables it when they match", async () => {
     const view = mount(async () => readyPreview());
     view.generator.songSelected(song(FIRST_TITLE));
     view.generate.click();
     await settle();
     view.syncLights.click();
 
-    expect(buttonHidden(view.root, GENERATE_BUTTON)).toBe(SHOWN);
+    expect(buttonHidden(view.root, DOWNLOAD_BUTTON)).toBe(SHOWN);
+    expect(buttonDisabled(view.root, DOWNLOAD_BUTTON)).toBe(DISABLED);
     expect(buttonDisabled(view.root, GENERATE_BUTTON)).toBe(ENABLED);
-    expect(buttonHidden(view.root, DOWNLOAD_BUTTON)).toBe(HIDDEN);
+
+    view.syncLights.click();
+
+    expect(buttonHidden(view.root, DOWNLOAD_BUTTON)).toBe(SHOWN);
+    expect(buttonDisabled(view.root, DOWNLOAD_BUTTON)).toBe(ENABLED);
+    expect(buttonDisabled(view.root, GENERATE_BUTTON)).toBe(DISABLED);
   });
 
   it("restores a song and its options, then generates", async () => {
@@ -207,7 +217,8 @@ describe("light show generator", () => {
       downloads.push({ name: name, bytes: bytes });
     });
     view.generator.songSelected(song(FIRST_TITLE));
-    expect(view.download.hidden).toBe(HIDDEN);
+    expect(view.download.hidden).toBe(SHOWN);
+    expect(view.download.disabled).toBe(DISABLED);
 
     view.generate.click();
     await settle();
@@ -216,6 +227,7 @@ describe("light show generator", () => {
     expect(view.generate.hidden).toBe(SHOWN);
     expect(view.generate.textContent).toBe(GENERATE_LABEL);
     expect(view.download.hidden).toBe(SHOWN);
+    expect(view.download.disabled).toBe(ENABLED);
     expect(view.download.textContent).toBe(DOWNLOAD_LABEL);
     expect(downloads).toHaveLength(0);
 
@@ -230,32 +242,37 @@ describe("light show generator", () => {
     expect(text(files[WAV_NAME], 0, 4)).toBe("RIFF");
   });
 
-  it("hides Download when the song or the show settings change", async () => {
+  it("disables Download when the song or the show settings change", async () => {
     const view = mount(async () => readyPreview());
     view.generator.songSelected(uploadedSong());
     view.generate.click();
     await settle();
     expect(view.download.hidden).toBe(SHOWN);
+    expect(view.download.disabled).toBe(ENABLED);
 
     view.syncLights.click();
-    expect(view.download.hidden).toBe(HIDDEN);
+    expect(view.download.hidden).toBe(SHOWN);
+    expect(view.download.disabled).toBe(DISABLED);
 
     view.generate.click();
     await settle();
     view.length.value = String(LONG_SECONDS);
     view.length.dispatchEvent(new Event("change"));
-    expect(view.download.hidden).toBe(HIDDEN);
+    expect(view.download.hidden).toBe(SHOWN);
+    expect(view.download.disabled).toBe(DISABLED);
 
     view.generate.click();
     await settle();
     view.start.value = String(START_LATER);
     view.start.dispatchEvent(new Event("input"));
-    expect(view.download.hidden).toBe(HIDDEN);
+    expect(view.download.hidden).toBe(SHOWN);
+    expect(view.download.disabled).toBe(DISABLED);
 
     view.generate.click();
     await settle();
     view.generator.songSelected(song(FIRST_TITLE));
-    expect(view.download.hidden).toBe(HIDDEN);
+    expect(view.download.hidden).toBe(SHOWN);
+    expect(view.download.disabled).toBe(DISABLED);
   });
 
   it("shows Download again when the length matches the last Generate", async () => {
@@ -269,11 +286,13 @@ describe("light show generator", () => {
 
     view.length.value = String(MID_SECONDS);
     view.length.dispatchEvent(new Event("change"));
-    expect(view.download.hidden).toBe(HIDDEN);
+    expect(view.download.hidden).toBe(SHOWN);
+    expect(view.download.disabled).toBe(DISABLED);
 
     view.length.value = String(PREVIEW_SECONDS);
     view.length.dispatchEvent(new Event("change"));
     expect(view.download.hidden).toBe(SHOWN);
+    expect(view.download.disabled).toBe(ENABLED);
 
     view.download.click();
     expect(downloads).toHaveLength(1);

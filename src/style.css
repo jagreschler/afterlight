@@ -55,6 +55,7 @@ h1 {
 
 .show-actions {
   display: flex;
+  flex-basis: 100%;
   align-items: center;
   gap: 0.75rem;
 }
@@ -134,7 +135,8 @@ h1 {
   fill: var(--red);
 }
 
-.generate-button:disabled {
+.generate-button:disabled,
+.download-button:disabled {
   opacity: 0.45;
   cursor: default;
 }
