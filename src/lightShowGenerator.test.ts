@@ -140,6 +140,35 @@ describe("light show generator", () => {
     expect(generate.nextElementSibling).toBe(download);
   });
 
+  it("shows only Generate before a show is built", () => {
+    const view = mount();
+    view.generator.songSelected(song(FIRST_TITLE));
+
+    expect(buttonHidden(view.root, GENERATE_BUTTON)).toBe(SHOWN);
+    expect(buttonHidden(view.root, DOWNLOAD_BUTTON)).toBe(HIDDEN);
+  });
+
+  it("shows only Download after Generate", async () => {
+    const view = mount(async () => readyPreview());
+    view.generator.songSelected(song(FIRST_TITLE));
+    view.generate.click();
+    await settle();
+
+    expect(buttonHidden(view.root, GENERATE_BUTTON)).toBe(HIDDEN);
+    expect(buttonHidden(view.root, DOWNLOAD_BUTTON)).toBe(SHOWN);
+  });
+
+  it("shows only Generate after an option changes", async () => {
+    const view = mount(async () => readyPreview());
+    view.generator.songSelected(song(FIRST_TITLE));
+    view.generate.click();
+    await settle();
+    view.syncLights.click();
+
+    expect(buttonHidden(view.root, GENERATE_BUTTON)).toBe(SHOWN);
+    expect(buttonHidden(view.root, DOWNLOAD_BUTTON)).toBe(HIDDEN);
+  });
+
   it("shows the light preview after Generate and not before", async () => {
     const view = mount(async () => readyPreview());
     view.generator.songSelected(song(FIRST_TITLE));
@@ -346,6 +375,14 @@ function mount(
     start: start,
     download: download,
   };
+}
+
+function buttonHidden(root: ParentNode, selector: string): boolean {
+  const button = root.querySelector(selector);
+  if (!(button instanceof HTMLButtonElement)) {
+    throw new Error(`missing ${selector}`);
+  }
+  return button.hidden;
 }
 
 function downloadButton(root: ParentNode): HTMLButtonElement {
