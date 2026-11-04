@@ -78,6 +78,9 @@ h1 {
 }
 
 .light-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   width: 100%;
   margin-top: 0.25rem;
 }
@@ -86,14 +89,35 @@ h1 {
   display: none;
 }
 
-.light-preview svg {
+.view-front,
+.view-top {
   display: block;
   width: 100%;
-  max-width: 100%;
   height: auto;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 6px;
+}
+
+@media (min-width: 48rem) {
+  .view-front,
+  .view-top {
+    width: calc(50% - 0.4rem);
+  }
+}
+
+.light-preview .car-body {
+  fill: var(--bg);
+  stroke: var(--line);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.photo-credit {
+  flex: 1 0 100%;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.75rem;
 }
 
 .light-preview .headlight,

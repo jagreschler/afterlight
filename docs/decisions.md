@@ -102,9 +102,9 @@ Test files are not split at about 100–120 lines. Consider splitting one into s
 
 ## 2026-11-04 — The preview shows a car, not only dots
 
-The light preview drew floating dots and no car. Jason wanted it to look like a real Tesla, so the drawn outline was replaced with a photo of a 2023 Model 3, front-left, with the red lights overlaid on the lamps. The photo is bundled in the app instead of loaded from a remote URL, so the preview still works offline and the link cannot break.
+The light preview now shows two views, because one angled photo could not place every lamp. The front view is a straight-on Model 3 photo and shows the four headlights plus the two front turn signals. The top view is a drawn outline, because no freely licensed overhead photo of a Model 3 or Model Y turned up, and it shows all eight lights. The same channel drives the matching dot in both views. On a narrow screen the views stack; on a wide screen they sit side by side. Photos are bundled in the app, not loaded from a remote URL, so the preview works offline and the link cannot break.
 
-Photo: Kazyakuruma, CC0 1.0, https://commons.wikimedia.org/wiki/File:Tesla_Model_3_(2023),_long_range,_Japan,_left-front.jpg. CC0 does not require an on-screen credit.
+Front photo: iMoD Official, CC BY 3.0, https://commons.wikimedia.org/wiki/File:2024_Tesla_Model_3_Performance_front_view_03.png. The license requires credit, so a short line sits under the preview. The earlier angled CC0 photo is no longer used.
 
 ## 2026-11-04 — ShowFlow is now LightShowGenerator
 
