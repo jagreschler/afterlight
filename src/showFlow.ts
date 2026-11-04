@@ -1,4 +1,5 @@
 import { analyzePreview, type AnalyzedPreview } from "./analyzePreview";
+import { frameAt } from "./frameAt";
 import { downloadFile } from "./downloadFile";
 import type { Song } from "./itunes";
 import { mountPreviewRenderer, type LightPreview } from "./previewRenderer";
@@ -26,6 +27,7 @@ const BUILDING = "Building light show…";
 const FAILED = "Couldn't build the light show.";
 const READY = "Generate";
 const UPLOAD_TRACK_ID = 0;
+const FRAME_MS = 20;
 
 export class ShowFlow {
   lightShow: Uint8Array[] | null = null;
@@ -76,6 +78,20 @@ export class ShowFlow {
 
   builtShow(): BuiltShow | null {
     return this.built;
+  }
+
+  follow(currentTime: number): void {
+    const frames = this.lightShow;
+    const built = this.built;
+    if (frames === null || built === null || this.preview === null) {
+      return;
+    }
+    const index = frameAt(currentTime, built.start, FRAME_MS, frames.length);
+    const frame = frames[index];
+    if (frame === undefined) {
+      return;
+    }
+    this.preview.show(frame);
   }
 
   private async run(): Promise<void> {

@@ -91,3 +91,7 @@ The button now says Generate. It still analyzes the song and builds the zip, but
 ## 2026-11-04 — The light preview is static first
 
 After Generate succeeds, the page shows the SVG light picture from the spike, painted with the first frame of the show. It stays still. Animation in time with the song is the next step, and keeping this step static makes that change small. The picture uses the same red on black as the rest of the page and scales to the width of the column.
+
+## 2026-11-04 — The light preview follows the preview player
+
+The picture moves with the existing preview player, because that audio element is what Play controls and it plays the whole file. Each time update picks a frame with `frameAt`: playback time minus the show's start, divided by the 20 ms frame. Times before the clip stay on the first frame, and times past the end stay on the last. Pause does not send a new time, so the lights hold.
