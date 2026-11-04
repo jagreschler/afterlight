@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import type { AudioAnalysis } from "./analyzeAudio";
 import type { AnalyzedPreview } from "./analyzePreview";
 import type { Song } from "./itunes";
-import { mountShowFlow, ShowFlow } from "./showFlow";
+import { mountLightShowGenerator, LightShowGenerator } from "./lightShowGenerator";
 
 const GENERATE_LABEL = "Generate";
 const DOWNLOAD_LABEL = "Download";
@@ -46,13 +46,13 @@ afterEach(() => {
   document.body.replaceChildren();
 });
 
-describe("show flow", () => {
+describe("light show generator", () => {
   it("hides the sync checkbox and Generate until a song is selected", () => {
     const view = mount();
 
     expect(view.root.hidden).toBe(HIDDEN);
 
-    view.flow.songSelected(song(FIRST_TITLE));
+    view.generator.songSelected(song(FIRST_TITLE));
 
     expect(view.root.hidden).toBe(SHOWN);
     expect(view.root.textContent).toContain(SYNC_LABEL);
@@ -63,14 +63,14 @@ describe("show flow", () => {
     const view = mount(async () => readyPreview());
     const chosen = song(FIRST_TITLE);
     const seen: Array<{ mode: string; title: string }> = [];
-    view.flow.onGenerate((mode, picked) => {
+    view.generator.onGenerate((mode, picked) => {
       seen.push({ mode: mode, title: picked.trackName });
     });
-    view.flow.onGenerate((mode, picked) => {
+    view.generator.onGenerate((mode, picked) => {
       seen.push({ mode: mode, title: picked.trackName });
     });
 
-    view.flow.songSelected(chosen);
+    view.generator.songSelected(chosen);
     view.generate.click();
     await settle();
 
@@ -89,7 +89,7 @@ describe("show flow", () => {
   it("disables the button while analyzing, then while building, then enables it", async () => {
     const pending = deferred<AnalyzedPreview>();
     const view = mount(() => pending.promise);
-    view.flow.songSelected(song(FIRST_TITLE));
+    view.generator.songSelected(song(FIRST_TITLE));
 
     view.generate.click();
 
@@ -106,13 +106,13 @@ describe("show flow", () => {
 
     expect(view.generate.disabled).toBe(false);
     expect(view.generate.textContent).toBe(GENERATE_LABEL);
-    expect(view.flow.lightShow).toHaveLength(ONE_FRAME);
+    expect(view.generator.lightShow).toHaveLength(ONE_FRAME);
   });
 
   it("shows an error and re-enables the button when the preview cannot be analyzed", async () => {
     const pending = deferred<AnalyzedPreview>();
     const view = mount(() => pending.promise);
-    view.flow.songSelected(song(FIRST_TITLE));
+    view.generator.songSelected(song(FIRST_TITLE));
 
     view.generate.click();
     pending.reject(new Error("offline"));
@@ -120,13 +120,13 @@ describe("show flow", () => {
 
     expect(view.generate.disabled).toBe(false);
     expect(view.generate.textContent).toBe(FAILED);
-    expect(view.flow.lightShow).toBeNull();
+    expect(view.generator.lightShow).toBeNull();
     expect(view.download.hidden).toBe(HIDDEN);
   });
 
   it("shows the light preview after Generate and not before", async () => {
     const view = mount(async () => readyPreview());
-    view.flow.songSelected(song(FIRST_TITLE));
+    view.generator.songSelected(song(FIRST_TITLE));
 
     expect(view.root.querySelector(LIGHT_PREVIEW)).toBeNull();
 
@@ -141,7 +141,7 @@ describe("show flow", () => {
     const view = mount(async () => readyPreview(), (name, bytes) => {
       downloads.push({ name: name, bytes: bytes });
     });
-    view.flow.songSelected(song(FIRST_TITLE));
+    view.generator.songSelected(song(FIRST_TITLE));
     expect(view.download.hidden).toBe(HIDDEN);
 
     view.generate.click();
@@ -166,7 +166,7 @@ describe("show flow", () => {
 
   it("hides Download when the song or the show settings change", async () => {
     const view = mount(async () => readyPreview());
-    view.flow.songSelected(uploadedSong());
+    view.generator.songSelected(uploadedSong());
     view.generate.click();
     await settle();
     expect(view.download.hidden).toBe(SHOWN);
@@ -188,7 +188,7 @@ describe("show flow", () => {
 
     view.generate.click();
     await settle();
-    view.flow.songSelected(song(FIRST_TITLE));
+    view.generator.songSelected(song(FIRST_TITLE));
     expect(view.download.hidden).toBe(HIDDEN);
   });
 
@@ -197,7 +197,7 @@ describe("show flow", () => {
     const view = mount(async () => readyPreview(), (name, bytes) => {
       downloads.push({ name: name, bytes: bytes });
     });
-    view.flow.songSelected(uploadedSong());
+    view.generator.songSelected(uploadedSong());
     view.generate.click();
     await settle();
 
@@ -216,19 +216,19 @@ describe("show flow", () => {
 
   it("stores Sync all lights as syncLights", async () => {
     const view = mount(async () => readyPreview());
-    view.flow.songSelected(song(FIRST_TITLE));
+    view.generator.songSelected(song(FIRST_TITLE));
     view.syncLights.click();
     view.generate.click();
     await settle();
 
-    const stored = view.flow.builtShow();
+    const stored = view.generator.builtShow();
     expect(stored?.syncLights).toBe(CHECKED);
   });
 
   it("keeps show length disabled at 30 seconds for an iTunes preview", () => {
     const view = mount();
 
-    view.flow.songSelected(song(FIRST_TITLE));
+    view.generator.songSelected(song(FIRST_TITLE));
 
     expect(view.length.disabled).toBe(true);
     expect(view.length.value).toBe(String(PREVIEW_SECONDS));
@@ -243,7 +243,7 @@ describe("show flow", () => {
       return readyPreview();
     });
 
-    view.flow.songSelected(uploadedSong());
+    view.generator.songSelected(uploadedSong());
     expect(view.length.disabled).toBe(false);
     view.length.value = String(LONG_SECONDS);
     view.generate.click();
@@ -251,7 +251,7 @@ describe("show flow", () => {
 
     expect(seen).toEqual([LONG_SECONDS]);
 
-    view.flow.songSelected(song(FIRST_TITLE));
+    view.generator.songSelected(song(FIRST_TITLE));
     expect(view.length.disabled).toBe(true);
     expect(view.length.value).toBe(String(PREVIEW_SECONDS));
     view.generate.click();
@@ -263,7 +263,7 @@ describe("show flow", () => {
   it("keeps the start time disabled at 0 for an iTunes preview", () => {
     const view = mount();
 
-    view.flow.songSelected(song(FIRST_TITLE));
+    view.generator.songSelected(song(FIRST_TITLE));
 
     expect(view.start.disabled).toBe(true);
     expect(view.start.value).toBe(String(START_AT));
@@ -276,7 +276,7 @@ describe("show flow", () => {
       return readyPreview();
     });
 
-    view.flow.songSelected(uploadedSong());
+    view.generator.songSelected(uploadedSong());
     expect(view.start.disabled).toBe(false);
     view.start.value = String(START_LATER);
     view.length.value = String(PREVIEW_SECONDS);
@@ -286,7 +286,7 @@ describe("show flow", () => {
     const uploaded = { seconds: PREVIEW_SECONDS, start: START_LATER };
     expect(seen).toEqual([uploaded]);
 
-    view.flow.songSelected(song(FIRST_TITLE));
+    view.generator.songSelected(song(FIRST_TITLE));
     expect(view.start.disabled).toBe(true);
     expect(view.start.value).toBe(String(START_AT));
     view.generate.click();
@@ -301,7 +301,7 @@ function mount(
   analyze?: (url: string, seconds: number, start: number) => Promise<AnalyzedPreview>,
   saveZip?: (name: string, bytes: Uint8Array) => void,
 ): {
-  flow: ShowFlow;
+  generator: LightShowGenerator;
   root: HTMLElement;
   generate: HTMLButtonElement;
   syncLights: HTMLInputElement;
@@ -311,18 +311,18 @@ function mount(
 } {
   const root = document.createElement("div");
   document.body.append(root);
-  const flow = saveZip === undefined
+  const generator = saveZip === undefined
     ? analyze === undefined
-      ? mountShowFlow(root)
-      : mountShowFlow(root, analyze)
-    : mountShowFlow(root, analyze ?? (async () => readyPreview()), saveZip);
+      ? mountLightShowGenerator(root)
+      : mountLightShowGenerator(root, analyze)
+    : mountLightShowGenerator(root, analyze ?? (async () => readyPreview()), saveZip);
   const generate = buttonNamed(root, GENERATE_LABEL);
   const syncLights = syncBox(root);
   const length = lengthBox(root);
   const start = startBox(root);
   const download = downloadButton(root);
   return {
-    flow: flow,
+    generator: generator,
     root: root,
     generate: generate,
     syncLights: syncLights,

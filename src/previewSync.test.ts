@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import type { AudioAnalysis } from "./analyzeAudio";
 import type { Song } from "./itunes";
 import { mountPreviewPlayer } from "./previewPlayer";
-import { mountShowFlow } from "./showFlow";
+import { mountLightShowGenerator } from "./lightShowGenerator";
 
 const SAMPLE_RATE = 44100;
 const FRAME_RATE = 50;
@@ -27,11 +27,11 @@ describe("preview sync", () => {
     const showRoot = document.createElement("div");
     document.body.append(playerRoot, showRoot);
     const player = mountPreviewPlayer(playerRoot, audio);
-    const flow = mountShowFlow(showRoot, async () => readyPreview());
+    const generator = mountLightShowGenerator(showRoot, async () => readyPreview());
     player.onTimeUpdate((currentTime) => {
-      flow.follow(currentTime);
+      generator.follow(currentTime);
     });
-    flow.songSelected(uploadedSong());
+    generator.songSelected(uploadedSong());
     const start = showRoot.querySelector(".start-point input");
     if (!(start instanceof HTMLInputElement)) {
       throw new Error("missing start point");
