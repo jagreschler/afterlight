@@ -121,3 +121,7 @@ A small version number sits in a corner of the page so Jason can tell which buil
 ## 2026-11-04 — Car photos use content-hashed names
 
 The car photos are imported, so the build gives each file a name from a hash of its bytes. Right after the car-preview deploy, a phone kept a cached old build that still pointed at deleted photos. GitHub Pages caches files for ten minutes, and the preview was blank. Unchanged bytes keep the same name, so a cached photo can stay. Changed bytes get a new name, so the next build cannot show a stale picture.
+
+## 2026-11-04 — The version read lives in one module
+
+The `package.json` version read now lives in one shared module. Both the Vite config and the Vitest config import it. There is a single place to read the version, so the two configs cannot drift.

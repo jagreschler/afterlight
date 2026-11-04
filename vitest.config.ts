@@ -1,14 +1,9 @@
-import { readFileSync } from "node:fs";
 import { defineConfig } from "vitest/config";
-
-const packageJson = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8")) as {
-  version: string;
-};
-const appVersion = packageJson.version;
+import { readAppVersion } from "./appVersion.ts";
 
 export default defineConfig({
   define: {
-    __APP_VERSION__: JSON.stringify(appVersion),
+    __APP_VERSION__: JSON.stringify(readAppVersion()),
   },
   test: {
     environment: "happy-dom",
