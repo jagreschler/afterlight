@@ -8,9 +8,13 @@ import { mountLightShowGenerator, LightShowGenerator } from "./lightShowGenerato
 const GENERATE_LABEL = "Generate";
 const DOWNLOAD_LABEL = "Download";
 const LIGHT_PREVIEW = ".light-preview svg";
+const GENERATE_BUTTON = ".generate .generate-button";
+const DOWNLOAD_BUTTON = ".generate .download-button";
 const SYNC_LABEL = "Sync lights";
 const HIDDEN = true;
 const SHOWN = false;
+const DISABLED = true;
+const ENABLED = false;
 const UNCHECKED = false;
 const CHECKED = true;
 const SPLIT = "split";
@@ -86,7 +90,7 @@ describe("light show generator", () => {
     expect(seen).toEqual([splitNotice, splitNotice, togetherNotice, togetherNotice]);
   });
 
-  it("disables the button while analyzing, then while building, then enables it", async () => {
+  it("disables the button while analyzing and building, and leaves it disabled once built", async () => {
     const pending = deferred<AnalyzedPreview>();
     const view = mount(() => pending.promise);
     view.generator.songSelected(song(FIRST_TITLE));
@@ -104,8 +108,10 @@ describe("light show generator", () => {
 
     await Promise.resolve();
 
-    expect(view.generate.disabled).toBe(false);
+    expect(view.generate.disabled).toBe(true);
+    expect(view.generate.hidden).toBe(SHOWN);
     expect(view.generate.textContent).toBe(GENERATE_LABEL);
+    expect(view.download.hidden).toBe(SHOWN);
     expect(view.generator.lightShow).toHaveLength(ONE_FRAME);
   });
 
@@ -122,6 +128,52 @@ describe("light show generator", () => {
     expect(view.generate.textContent).toBe(FAILED);
     expect(view.generator.lightShow).toBeNull();
     expect(view.download.hidden).toBe(HIDDEN);
+  });
+
+  it("puts Download beside Generate", () => {
+    const view = mount();
+    const generate = view.root.querySelector(GENERATE_BUTTON);
+    const download = view.root.querySelector(DOWNLOAD_BUTTON);
+
+    expect(generate).toBeInstanceOf(HTMLButtonElement);
+    expect(download).toBeInstanceOf(HTMLButtonElement);
+    if (!(generate instanceof HTMLButtonElement) || !(download instanceof HTMLButtonElement)) {
+      throw new Error("missing show buttons");
+    }
+    expect(generate.parentElement).toBe(download.parentElement);
+    expect(generate.nextElementSibling).toBe(download);
+  });
+
+  it("shows an enabled Generate and no Download before a show is built", () => {
+    const view = mount();
+    view.generator.songSelected(song(FIRST_TITLE));
+
+    expect(buttonHidden(view.root, GENERATE_BUTTON)).toBe(SHOWN);
+    expect(buttonDisabled(view.root, GENERATE_BUTTON)).toBe(ENABLED);
+    expect(buttonHidden(view.root, DOWNLOAD_BUTTON)).toBe(HIDDEN);
+  });
+
+  it("keeps Generate visible but disabled and shows Download after Generate", async () => {
+    const view = mount(async () => readyPreview());
+    view.generator.songSelected(song(FIRST_TITLE));
+    view.generate.click();
+    await settle();
+
+    expect(buttonHidden(view.root, GENERATE_BUTTON)).toBe(SHOWN);
+    expect(buttonDisabled(view.root, GENERATE_BUTTON)).toBe(DISABLED);
+    expect(buttonHidden(view.root, DOWNLOAD_BUTTON)).toBe(SHOWN);
+  });
+
+  it("enables Generate and hides Download after an option changes", async () => {
+    const view = mount(async () => readyPreview());
+    view.generator.songSelected(song(FIRST_TITLE));
+    view.generate.click();
+    await settle();
+    view.syncLights.click();
+
+    expect(buttonHidden(view.root, GENERATE_BUTTON)).toBe(SHOWN);
+    expect(buttonDisabled(view.root, GENERATE_BUTTON)).toBe(ENABLED);
+    expect(buttonHidden(view.root, DOWNLOAD_BUTTON)).toBe(HIDDEN);
   });
 
   it("shows the light preview after Generate and not before", async () => {
@@ -147,7 +199,8 @@ describe("light show generator", () => {
     view.generate.click();
     await settle();
 
-    expect(view.generate.disabled).toBe(false);
+    expect(view.generate.disabled).toBe(DISABLED);
+    expect(view.generate.hidden).toBe(SHOWN);
     expect(view.generate.textContent).toBe(GENERATE_LABEL);
     expect(view.download.hidden).toBe(SHOWN);
     expect(view.download.textContent).toBe(DOWNLOAD_LABEL);
@@ -330,6 +383,22 @@ function mount(
     start: start,
     download: download,
   };
+}
+
+function buttonHidden(root: ParentNode, selector: string): boolean {
+  return showButton(root, selector).hidden !== false;
+}
+
+function buttonDisabled(root: ParentNode, selector: string): boolean {
+  return showButton(root, selector).disabled;
+}
+
+function showButton(root: ParentNode, selector: string): HTMLButtonElement {
+  const button = root.querySelector(selector);
+  if (!(button instanceof HTMLButtonElement)) {
+    throw new Error(`missing ${selector}`);
+  }
+  return button;
 }
 
 function downloadButton(root: ParentNode): HTMLButtonElement {

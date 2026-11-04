@@ -62,7 +62,7 @@ export class LightShowGenerator {
     });
     this.previewRoot = document.createElement("div");
     this.previewRoot.hidden = true;
-    this.card.download.before(this.previewRoot);
+    root.append(this.previewRoot);
   }
 
   songSelected(song: Song): void {

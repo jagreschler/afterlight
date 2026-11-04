@@ -53,6 +53,12 @@ h1 {
   display: none;
 }
 
+.show-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .sync-lights,
 .show-length,
 .start-point {
@@ -126,6 +132,11 @@ h1 {
 .light-preview .headlight,
 .light-preview .turn-signal {
   fill: var(--red);
+}
+
+.generate-button:disabled {
+  opacity: 0.45;
+  cursor: default;
 }
 
 .generate-button,
