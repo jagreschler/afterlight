@@ -67,7 +67,7 @@ export class GenerateShowCard {
     save.type = "button";
     save.className = "download-button";
     save.textContent = DOWNLOAD_LABEL;
-    save.hidden = true;
+    save.disabled = true;
     this.download = save;
 
     const actions = document.createElement("div");
@@ -98,12 +98,12 @@ export class GenerateShowCard {
   }
 
   showDownload(): void {
-    this.download.hidden = false;
+    this.download.disabled = false;
     this.button.disabled = true;
   }
 
   hideDownload(): void {
-    this.download.hidden = true;
+    this.download.disabled = true;
     this.button.disabled = false;
   }
 

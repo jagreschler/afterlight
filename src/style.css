@@ -135,7 +135,8 @@ h1 {
   fill: var(--red);
 }
 
-.generate-button:disabled {
+.generate-button:disabled,
+.download-button:disabled {
   opacity: 0.45;
   cursor: default;
 }
