@@ -11,6 +11,7 @@ const TURN = ".light-preview .turn-signal";
 const FRONT = ".light-preview .view-front";
 const TOP = ".light-preview .view-top";
 const FRONT_PHOTO = "tesla-model-3-front.jpg";
+const TOP_PHOTO = "tesla-top.jpg";
 const HEADLIGHT_COUNT = 4;
 const FRONT_TURNS = 2;
 const ALL_TURNS = 4;
@@ -37,9 +38,24 @@ describe("light preview", () => {
     }
     const href = photo.getAttribute("href") ?? "";
     expect(href).toContain(FRONT_PHOTO);
+    const frontBox = front.getAttribute("viewBox") ?? "";
+    const frontParts = frontBox.split(" ");
+    const frontWidth = Number(frontParts[2]);
+    const frontHeight = Number(frontParts[3]);
+    const frontRatio = frontHeight / frontWidth;
+    expect(frontRatio).toBeGreaterThan(0.5);
+    expect(frontRatio).toBeLessThan(0.9);
+    expect(front.querySelector(".car-body")).toBeNull();
     expect(front.querySelectorAll(".headlight")).toHaveLength(HEADLIGHT_COUNT);
     expect(front.querySelectorAll(".turn-signal")).toHaveLength(FRONT_TURNS);
-    expect(top.querySelector(".car-body")).toBeInstanceOf(SVGElement);
+    const topPhoto = top.querySelector("image.car-photo");
+    expect(topPhoto).toBeInstanceOf(SVGElement);
+    if (!(topPhoto instanceof Element)) {
+      throw new Error("missing top photo");
+    }
+    const topHref = topPhoto.getAttribute("href") ?? "";
+    expect(topHref).toContain(TOP_PHOTO);
+    expect(top.querySelector(".car-body")).toBeNull();
     expect(top.querySelectorAll(".headlight")).toHaveLength(HEADLIGHT_COUNT);
     expect(top.querySelectorAll(".turn-signal")).toHaveLength(ALL_TURNS);
 
