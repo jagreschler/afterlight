@@ -204,11 +204,17 @@ function mount(
 }
 
 function lengthBox(root: ParentNode): HTMLSelectElement {
-  const select = root.querySelector("select");
-  if (!(select instanceof HTMLSelectElement)) {
-    throw new Error("missing show length choice");
+  const labels = root.querySelectorAll("label");
+  for (const label of labels) {
+    const caption = label.querySelector("span");
+    if (caption?.textContent === LENGTH_LABEL) {
+      const select = label.querySelector("select");
+      if (select instanceof HTMLSelectElement) {
+        return select;
+      }
+    }
   }
-  return select;
+  throw new Error("missing show length choice");
 }
 
 function choiceLabels(select: HTMLSelectElement): string[] {
