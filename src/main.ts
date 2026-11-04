@@ -1,7 +1,7 @@
 import type { Song } from "./itunes";
 import { searchSongs } from "./itunes";
 import { mountPreviewPlayer } from "./previewPlayer";
-import { loadRecipes, rememberRecipe, songFromRecipe, type Recipe } from "./recentHistory";
+import { loadRecipes, recipeFromShow, rememberRecipe, type Recipe } from "./recentHistory";
 import { mountRecentHistory } from "./recentHistoryCard";
 import { mountSearchBar } from "./searchBar";
 import { mountLightShowGenerator } from "./lightShowGenerator";
@@ -50,21 +50,15 @@ mountSearchBar(searchRoot, {
 });
 mountUploadSong(uploadRoot, chooseSong);
 const recent = mountRecentHistory(recentRoot, loadRecipes(localStorage), replay);
-generator.onGenerate((mode, song) => {
+generator.onGenerate((_mode, song) => {
   const built = generator.builtShow();
-  if (built === null || built.syncLights !== (mode === "together")) {
+  if (built === null) {
     return;
   }
-  const recipe: Recipe = {
-    trackId: song.trackId,
-    trackName: song.trackName,
-    artistName: song.artistName,
-    artworkUrl: song.artworkUrl,
-    previewUrl: song.previewUrl,
-    seconds: built.seconds,
-    start: built.start,
-    syncLights: built.syncLights,
-  };
+  const recipe = recipeFromShow(song, built.seconds, built.start, built.syncLights);
+  if (recipe === null) {
+    return;
+  }
   recent.show(rememberRecipe(localStorage, recipe));
 });
 preview.onTimeUpdate((currentTime) => {
@@ -72,10 +66,9 @@ preview.onTimeUpdate((currentTime) => {
 });
 
 function replay(recipe: Recipe): void {
-  const song = songFromRecipe(recipe);
-  card.show(song);
-  preview.load(song.previewUrl);
-  generator.restore(song, recipe.seconds, recipe.start, recipe.syncLights);
+  card.show(recipe.song);
+  preview.load(recipe.song.previewUrl);
+  generator.restore(recipe.song, recipe.seconds, recipe.start, recipe.syncLights);
 }
 
 const appVersion = document.createElement("p");

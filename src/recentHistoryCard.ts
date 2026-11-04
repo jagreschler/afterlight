@@ -42,10 +42,10 @@ function buttonFor(recipe: Recipe, onPick: (recipe: Recipe) => void): HTMLButton
   button.type = "button";
   const title = document.createElement("span");
   title.className = "recent-title";
-  title.textContent = recipe.trackName;
+  title.textContent = recipe.song.trackName;
   const artist = document.createElement("span");
   artist.className = "recent-artist";
-  artist.textContent = recipe.artistName;
+  artist.textContent = recipe.song.artistName;
   button.append(title, artist);
   button.addEventListener("click", () => {
     onPick(recipe);

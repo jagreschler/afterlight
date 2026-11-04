@@ -2,14 +2,9 @@ import type { Song } from "./itunes";
 
 const STORAGE_KEY = "afterlight.recent";
 const LIMIT = 5;
-const UPLOAD_ID = 0;
 
 export type Recipe = {
-  trackId: number;
-  trackName: string;
-  artistName: string;
-  artworkUrl: string;
-  previewUrl: string;
+  song: Song;
   seconds: number;
   start: number;
   syncLights: boolean;
@@ -30,9 +25,6 @@ export function loadRecipes(store: RecipeStore): Recipe[] {
 
 export function rememberRecipe(store: RecipeStore, recipe: Recipe): Recipe[] {
   const current = loadRecipes(store);
-  if (recipe.trackId === UPLOAD_ID) {
-    return current;
-  }
   const next = [recipe];
   for (const item of current) {
     if (!sameRecipe(item, recipe)) {
@@ -48,13 +40,20 @@ export function rememberRecipe(store: RecipeStore, recipe: Recipe): Recipe[] {
   return kept;
 }
 
-export function songFromRecipe(recipe: Recipe): Song {
+export function recipeFromShow(
+  song: Song,
+  seconds: number,
+  start: number,
+  syncLights: boolean,
+): Recipe | null {
+  if (song.trackId === 0) {
+    return null;
+  }
   return {
-    trackId: recipe.trackId,
-    trackName: recipe.trackName,
-    artistName: recipe.artistName,
-    artworkUrl: recipe.artworkUrl,
-    previewUrl: recipe.previewUrl,
+    song: song,
+    seconds: seconds,
+    start: start,
+    syncLights: syncLights,
   };
 }
 
@@ -68,62 +67,25 @@ function recipesFrom(raw: string | null): Recipe[] {
   }
   const recipes: Recipe[] = [];
   for (const item of parsed) {
-    const recipe = recipeFrom(item);
-    if (recipe !== null) {
-      recipes.push(recipe);
+    if (isRecipe(item)) {
+      recipes.push(item);
     }
   }
   return recipes;
 }
 
-function recipeFrom(value: unknown): Recipe | null {
-  if (!isRecord(value)) {
-    return null;
+function isRecipe(value: unknown): value is Recipe {
+  if (typeof value !== "object" || value === null) {
+    return false;
   }
-  const trackId = finiteNumber(value.trackId);
-  const seconds = finiteNumber(value.seconds);
-  const start = finiteNumber(value.start);
-  if (trackId === null || trackId === UPLOAD_ID || seconds === null || start === null) {
-    return null;
-  }
-  if (!nonEmpty(value.trackName) || !nonEmpty(value.artistName) || !nonEmpty(value.previewUrl)) {
-    return null;
-  }
-  if (typeof value.artworkUrl !== "string" || typeof value.syncLights !== "boolean") {
-    return null;
-  }
-  return {
-    trackId: trackId,
-    trackName: value.trackName,
-    artistName: value.artistName,
-    artworkUrl: value.artworkUrl,
-    previewUrl: value.previewUrl,
-    seconds: seconds,
-    start: start,
-    syncLights: value.syncLights,
-  };
-}
-
-function finiteNumber(value: unknown): number | null {
-  if (typeof value !== "number" || !Number.isFinite(value)) {
-    return null;
-  }
-  return value;
+  return "song" in value && "seconds" in value && "start" in value && "syncLights" in value;
 }
 
 function sameRecipe(left: Recipe, right: Recipe): boolean {
   return (
-    left.trackId === right.trackId &&
+    left.song.trackId === right.song.trackId &&
     left.seconds === right.seconds &&
     left.start === right.start &&
     left.syncLights === right.syncLights
   );
-}
-
-function nonEmpty(value: unknown): value is string {
-  return typeof value === "string" && value.length > 0;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

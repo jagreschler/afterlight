@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { loadRecipes, rememberRecipe, type Recipe, type RecipeStore } from "./recentHistory";
+import { loadRecipes, recipeFromShow, rememberRecipe, type Recipe, type RecipeStore } from "./recentHistory";
+import type { Song } from "./itunes";
 import { mountRecentHistory } from "./recentHistoryCard";
 
 const TRACK_ID = 7;
@@ -38,7 +39,7 @@ describe("recent recipes", () => {
 
     expect(saved).toHaveLength(5);
     expect(saved[0]).toEqual(again);
-    expect(saved.some((item) => item.trackId === OTHER_ID)).toBe(false);
+    expect(saved.some((item) => item.song.trackId === OTHER_ID)).toBe(false);
     expect(loadRecipes(store)).toEqual(saved);
   });
 
@@ -53,9 +54,9 @@ describe("recent recipes", () => {
 
   it("does not save an uploaded song", () => {
     const store = memory();
-    const saved = rememberRecipe(store, recipe(UPLOAD_ID, "My Song", "", UNSYNCED));
+    const uploaded = recipeFromShow(song(UPLOAD_ID, "My Song", ""), SECONDS, START, UNSYNCED);
 
-    expect(saved).toEqual([]);
+    expect(uploaded).toBeNull();
     expect(loadRecipes(store)).toEqual([]);
   });
 
@@ -96,14 +97,20 @@ describe("recent recipes", () => {
 
 function recipe(trackId: number, title: string, artist: string, syncLights: boolean): Recipe {
   return {
+    song: song(trackId, title, artist),
+    seconds: SECONDS,
+    start: START,
+    syncLights: syncLights,
+  };
+}
+
+function song(trackId: number, title: string, artist: string): Song {
+  return {
     trackId: trackId,
     trackName: title,
     artistName: artist,
     artworkUrl: ART,
     previewUrl: PREVIEW,
-    seconds: SECONDS,
-    start: START,
-    syncLights: syncLights,
   };
 }
 
