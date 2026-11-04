@@ -28,6 +28,14 @@ const FSEQ_NAME = `${SLUG}.fseq`;
 const WAV_NAME = `${SLUG}.wav`;
 const NOTE_NAME = "README.txt";
 const PREVIEW_SAMPLES = new Float32Array([0, 0.25, -0.25]);
+const PREVIEW_SECONDS = 30;
+const MID_SECONDS = 45;
+const LONG_SECONDS = 60;
+const UPLOAD_ID = 0;
+const LENGTH_LABEL = "Show length";
+const PREVIEW_CHOICE = `${PREVIEW_SECONDS} s`;
+const MID_CHOICE = `${MID_SECONDS} s`;
+const LONG_CHOICE = `${LONG_SECONDS} s`;
 
 afterEach(() => {
   document.body.replaceChildren();
@@ -129,16 +137,52 @@ describe("show flow", () => {
     expect(text(files[FSEQ_NAME], 0, 4)).toBe("PSEQ");
     expect(text(files[WAV_NAME], 0, 4)).toBe("RIFF");
   });
+
+  it("keeps show length disabled at 30 seconds for an iTunes preview", () => {
+    const view = mount();
+
+    view.flow.songSelected(song(FIRST_TITLE));
+
+    expect(view.length.disabled).toBe(true);
+    expect(view.length.value).toBe(String(PREVIEW_SECONDS));
+    expect(choiceLabels(view.length)).toEqual([PREVIEW_CHOICE, MID_CHOICE, LONG_CHOICE]);
+    expect(view.length.labels[0]?.textContent).toContain(LENGTH_LABEL);
+  });
+
+  it("enables show length for an upload and trims the show to that choice", async () => {
+    const seen: number[] = [];
+    const view = mount(async (_url, seconds) => {
+      seen.push(seconds);
+      return readyPreview();
+    });
+
+    view.flow.songSelected(uploadedSong());
+    expect(view.length.disabled).toBe(false);
+    view.length.value = String(LONG_SECONDS);
+    view.generate.click();
+    await settle();
+
+    expect(seen).toEqual([LONG_SECONDS]);
+
+    view.flow.songSelected(song(FIRST_TITLE));
+    expect(view.length.disabled).toBe(true);
+    expect(view.length.value).toBe(String(PREVIEW_SECONDS));
+    view.generate.click();
+    await settle();
+
+    expect(seen).toEqual([LONG_SECONDS, PREVIEW_SECONDS]);
+  });
 });
 
 function mount(
-  analyze?: (url: string) => Promise<AnalyzedPreview>,
+  analyze?: (url: string, seconds: number) => Promise<AnalyzedPreview>,
   download?: (name: string, bytes: Uint8Array) => void,
 ): {
   flow: ShowFlow;
   root: HTMLElement;
   generate: HTMLButtonElement;
   sync: HTMLInputElement;
+  length: HTMLSelectElement;
 } {
   const root = document.createElement("div");
   document.body.append(root);
@@ -149,12 +193,30 @@ function mount(
     : mountShowFlow(root, analyze ?? (async () => readyPreview()), download);
   const generate = buttonNamed(root, GENERATE_LABEL);
   const sync = syncBox(root);
+  const length = lengthBox(root);
   return {
     flow: flow,
     root: root,
     generate: generate,
     sync: sync,
+    length: length,
   };
+}
+
+function lengthBox(root: ParentNode): HTMLSelectElement {
+  const select = root.querySelector(".show-length select");
+  if (!(select instanceof HTMLSelectElement)) {
+    throw new Error("missing show length choice");
+  }
+  return select;
+}
+
+function choiceLabels(select: HTMLSelectElement): string[] {
+  const labels: string[] = [];
+  for (const option of select.options) {
+    labels.push(option.textContent ?? "");
+  }
+  return labels;
 }
 
 function buttonNamed(root: ParentNode, label: string): HTMLButtonElement {
@@ -254,6 +316,16 @@ function song(title: string): Song {
     trackName: title,
     artistName: ARTIST,
     artworkUrl: "https://example.com/art.jpg",
+    previewUrl: SAMPLE_URL,
+  };
+}
+
+function uploadedSong(): Song {
+  return {
+    trackId: UPLOAD_ID,
+    trackName: "My Song",
+    artistName: "",
+    artworkUrl: "",
     previewUrl: SAMPLE_URL,
   };
 }

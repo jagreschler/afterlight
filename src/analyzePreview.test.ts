@@ -4,6 +4,9 @@ import { analyzePreview } from "./analyzePreview";
 
 const SAMPLE_RATE = 44100;
 const SAMPLE_URL = "https://example.com/preview.m4a";
+const SHOW_SECONDS = 2;
+const LONG_SECONDS = 5;
+const SHORT_SECONDS = 1;
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -18,7 +21,7 @@ describe("analyzePreview", () => {
       vi.fn(async () => new Response(new Uint8Array([1, 2, 3, 4]), { status: 200 })),
     );
 
-    const prepared = await analyzePreview(SAMPLE_URL, decode);
+    const prepared = await analyzePreview(SAMPLE_URL, SHORT_SECONDS, decode);
     const analysis = prepared.analysis;
 
     expect(fetch).toHaveBeenCalledWith(SAMPLE_URL);
@@ -31,6 +34,26 @@ describe("analyzePreview", () => {
     expect(mean(analysis.frames.map((frame) => frame.bass))).toBeGreaterThan(
       mean(analysis.frames.map((frame) => frame.mids)) * 3,
     );
+  });
+
+  it("keeps the requested length from the start, or the whole clip when it is shorter", async () => {
+    const longSamples = sine(100, SAMPLE_RATE, LONG_SECONDS);
+    const decodeLong = vi.fn(async () => ({ samples: longSamples, sampleRate: SAMPLE_RATE }));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response(new Uint8Array([1, 2, 3, 4]), { status: 200 })),
+    );
+
+    const trimmed = await analyzePreview(SAMPLE_URL, SHOW_SECONDS, decodeLong);
+
+    expect(trimmed.samples.length).toBe(SAMPLE_RATE * SHOW_SECONDS);
+    expect(trimmed.samples[0]).toBe(longSamples[0]);
+
+    const shortSamples = sine(100, SAMPLE_RATE, SHORT_SECONDS);
+    const decodeShort = vi.fn(async () => ({ samples: shortSamples, sampleRate: SAMPLE_RATE }));
+    const whole = await analyzePreview(SAMPLE_URL, SHOW_SECONDS, decodeShort);
+
+    expect(whole.samples).toBe(shortSamples);
   });
 
   it("throws when the preview cannot be downloaded", async () => {

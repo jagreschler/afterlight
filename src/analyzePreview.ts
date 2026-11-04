@@ -16,6 +16,7 @@ export type AnalyzedPreview = {
 
 export async function analyzePreview(
   url: string,
+  seconds: number = PREVIEW_SECONDS,
   decode: (bytes: ArrayBuffer) => Promise<DecodedPreview> = decodeWithWebAudio,
 ): Promise<AnalyzedPreview> {
   const response = await fetch(url);
@@ -25,7 +26,7 @@ export async function analyzePreview(
 
   const bytes = await response.arrayBuffer();
   const preview = await decode(bytes);
-  const samples = trimToSeconds(preview.samples, preview.sampleRate, PREVIEW_SECONDS);
+  const samples = trimToSeconds(preview.samples, preview.sampleRate, seconds);
   const analysis = analyzeAudio(samples, preview.sampleRate);
   return {
     analysis: analysis,

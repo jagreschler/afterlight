@@ -71,3 +71,7 @@ The button now analyzes the preview, builds the pulse grid, writes the FSEQ and 
 ## 2026-11-04 — A local song file uses the same show path
 
 Apple previews are only 30 seconds. Next to search, the page can take a local audio file. The file stays in the browser: it plays in the preview, and Generate & Download builds the show from it through the same analyze, FSEQ, WAV, and zip path. For now that show still uses only the first 30 seconds. The download name is the file name without its extension, slugified. Uploads open the way to longer shows later.
+
+## 2026-11-04 — Uploads can be 30, 45, or 60 seconds
+
+Apple previews are only 30 seconds, so the length choice stays disabled at 30 for a catalog song. An uploaded file, the song with no catalog id, can be 30, 45, or 60 seconds from the start. The same trim and analyze path builds the show. A file shorter than the choice is used whole. A start point comes later.
