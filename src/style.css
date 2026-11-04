@@ -44,7 +44,8 @@ h1 {
 }
 
 .sync-lights,
-.show-length {
+.show-length,
+.start-point {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -54,7 +55,8 @@ h1 {
   cursor: pointer;
 }
 
-.show-length select {
+.show-length select,
+.start-point input {
   font: inherit;
   color: var(--text);
   background: var(--panel);
@@ -62,6 +64,10 @@ h1 {
   border-radius: 6px;
   min-height: var(--tap);
   padding: 0 0.5rem;
+}
+
+.start-point input {
+  width: 4.5rem;
 }
 
 .sync-lights input {
@@ -86,6 +92,7 @@ h1 {
 
 .sync-lights:focus-within,
 .show-length select:focus-visible,
+.start-point input:focus-visible,
 .generate-button:focus-visible,
 .search input:focus-visible,
 .upload-button:focus-within,
