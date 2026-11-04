@@ -91,3 +91,11 @@ The button now says Generate. It still analyzes the song and builds the zip, but
 ## 2026-11-04 — The light preview is static first
 
 After Generate succeeds, the page shows the SVG light picture from the spike, painted with the first frame of the show. It stays still. Animation in time with the song is the next step, and keeping this step static makes that change small. The picture uses the same red on black as the rest of the page and scales to the width of the column.
+
+## 2026-11-04 — The light preview follows the preview player
+
+The light preview now animates in step with the song. `main.ts` passes each audio `timeupdate`'s `currentTime` to `ShowFlow.follow`, which uses `frameAt` to pick the frame: subtract the chosen start, then step in 20 ms frames, and clamp to the first or last frame. On pause no `timeupdate` fires, so the lights hold. The preview player is the audio element Play controls, and it plays the whole file, so the start offset has to come out of the playback time.
+
+## 2026-11-04 — Test files can stay longer than source files
+
+Test files are not split at about 100–120 lines. Consider splitting one into specific test areas only around 200–400 lines. The about-100-line limit is for source files. That is why `src/previewSync.test.ts` (118 lines) stays one file.

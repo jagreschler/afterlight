@@ -43,3 +43,6 @@ mountSearchBar(searchRoot, {
   onSelect: chooseSong,
 });
 mountUploadSong(uploadRoot, chooseSong);
+preview.onTimeUpdate((currentTime) => {
+  flow.follow(currentTime);
+});
