@@ -176,6 +176,19 @@ describe("light show generator", () => {
     expect(buttonHidden(view.root, DOWNLOAD_BUTTON)).toBe(HIDDEN);
   });
 
+  it("restores a song and its options, then generates", async () => {
+    const view = mount(async () => readyPreview());
+    const picked = song(FIRST_TITLE);
+
+    view.generator.restore(picked, PREVIEW_SECONDS, START_AT, CHECKED);
+    await settle();
+
+    expect(view.syncLights.checked).toBe(CHECKED);
+    expect(view.length.value).toBe(String(PREVIEW_SECONDS));
+    expect(view.start.value).toBe(String(START_AT));
+    expect(view.generator.lightShow).not.toBeNull();
+  });
+
   it("shows the light preview after Generate and not before", async () => {
     const view = mount(async () => readyPreview());
     view.generator.songSelected(song(FIRST_TITLE));

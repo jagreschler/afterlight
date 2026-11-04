@@ -1,6 +1,8 @@
 import type { Song } from "./itunes";
 import { searchSongs } from "./itunes";
 import { mountPreviewPlayer } from "./previewPlayer";
+import { loadRecipes, recipeFromShow, rememberRecipe, type Recipe } from "./recentHistory";
+import { mountRecentHistory } from "./recentHistoryCard";
 import { mountSearchBar } from "./searchBar";
 import { mountLightShowGenerator } from "./lightShowGenerator";
 import { mountSongCard } from "./songCard";
@@ -8,6 +10,7 @@ import { mountUploadSong } from "./uploadSong";
 
 const searchRoot = document.querySelector("#search");
 const uploadRoot = document.querySelector("#upload");
+const recentRoot = document.querySelector("#recent");
 const cardRoot = document.querySelector("#selected-song");
 const previewRoot = document.querySelector("#preview");
 const generateRoot = document.querySelector("#generate");
@@ -20,6 +23,9 @@ if (!(searchRoot instanceof HTMLElement)) {
 }
 if (!(uploadRoot instanceof HTMLElement)) {
   throw new Error("Afterlight is missing its #upload element.");
+}
+if (!(recentRoot instanceof HTMLElement)) {
+  throw new Error("Afterlight is missing its #recent element.");
 }
 if (!(cardRoot instanceof HTMLElement)) {
   throw new Error("Afterlight is missing its #selected-song element.");
@@ -43,9 +49,29 @@ mountSearchBar(searchRoot, {
   onSelect: chooseSong,
 });
 mountUploadSong(uploadRoot, chooseSong);
+const savedRecipes = loadRecipes(localStorage);
+const recent = mountRecentHistory(recentRoot, savedRecipes, replay);
+generator.onGenerate((_mode, song) => {
+  const built = generator.builtShow();
+  if (built === null) {
+    return;
+  }
+  const recipe = recipeFromShow(song, built.seconds, built.start, built.syncLights);
+  if (recipe === null) {
+    return;
+  }
+  const recentRecipes = rememberRecipe(localStorage, recipe);
+  recent.show(recentRecipes);
+});
 preview.onTimeUpdate((currentTime) => {
   generator.follow(currentTime);
 });
+
+function replay(recipe: Recipe): void {
+  card.show(recipe.song);
+  preview.load(recipe.song.previewUrl);
+  generator.restore(recipe.song, recipe.seconds, recipe.start, recipe.syncLights);
+}
 
 const appVersion = document.createElement("p");
 appVersion.className = "app-version";
