@@ -8,29 +8,48 @@ const DARK = "0";
 const FIRST = 0;
 const HEADLIGHT = ".light-preview .headlight";
 const TURN = ".light-preview .turn-signal";
-const CAR_BODY = ".light-preview svg .car-body";
-const CAR_PHOTO = ".light-preview svg image.car-photo";
-const PHOTO_NAME = "tesla-model-3.jpg";
+const FRONT = ".light-preview .view-front";
+const TOP = ".light-preview .view-top";
+const FRONT_PHOTO = "tesla-model-3-front.jpg";
+const HEADLIGHT_COUNT = 4;
+const FRONT_TURNS = 2;
+const ALL_TURNS = 4;
 
 afterEach(() => {
   document.body.replaceChildren();
 });
 
 describe("light preview", () => {
-  it("uses a photo of the car instead of a drawn outline", () => {
+  it("shows a front photo and a top view, and lights the same channel in both", () => {
     const view = mount();
-    const photo = view.root.querySelector(CAR_PHOTO);
-    const headlight = view.root.querySelector(HEADLIGHT);
+    const front = view.root.querySelector(FRONT);
+    const top = view.root.querySelector(TOP);
 
-    expect(view.root.querySelector(CAR_BODY)).toBeNull();
+    expect(front).toBeInstanceOf(SVGElement);
+    expect(top).toBeInstanceOf(SVGElement);
+    if (!(front instanceof Element) || !(top instanceof Element)) {
+      throw new Error("missing car views");
+    }
+    const photo = front.querySelector("image.car-photo");
     expect(photo).toBeInstanceOf(SVGElement);
-    if (!(photo instanceof Element) || headlight === null) {
-      throw new Error("missing car photo");
+    if (!(photo instanceof Element)) {
+      throw new Error("missing front photo");
     }
     const href = photo.getAttribute("href") ?? "";
-    expect(href).toContain(PHOTO_NAME);
-    const order = photo.compareDocumentPosition(headlight);
-    expect(order & Node.DOCUMENT_POSITION_FOLLOWING).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(href).toContain(FRONT_PHOTO);
+    expect(front.querySelectorAll(".headlight")).toHaveLength(HEADLIGHT_COUNT);
+    expect(front.querySelectorAll(".turn-signal")).toHaveLength(FRONT_TURNS);
+    expect(top.querySelector(".car-body")).toBeInstanceOf(SVGElement);
+    expect(top.querySelectorAll(".headlight")).toHaveLength(HEADLIGHT_COUNT);
+    expect(top.querySelectorAll(".turn-signal")).toHaveLength(ALL_TURNS);
+
+    const leftOuter = HEADLIGHTS[FIRST];
+    if (leftOuter === undefined) {
+      throw new Error("missing headlight");
+    }
+    view.preview.show(frame(leftOuter, ON));
+    expect(opacity(front, ".headlight")).toBe(LIT);
+    expect(opacity(top, ".headlight")).toBe(LIT);
   });
 
   it("turns a headlight on for one frame and off for the next", () => {
