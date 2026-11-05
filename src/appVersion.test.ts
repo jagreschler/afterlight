@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 
 const VERSION = ".app-version";
-const LABEL = "v0.1.0";
+const LABEL = "v0.2.0";
 
 afterEach(() => {
   document.body.replaceChildren();
