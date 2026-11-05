@@ -7,6 +7,16 @@ const FRAME_RATE = 50;
 const BEAT_FRAME = 10;
 const BEAT_TIME = BEAT_FRAME / FRAME_RATE;
 const OFF = 0;
+const GAP_FRAMES = 50;
+const SIDE_FRAMES = 25;
+const FIRST_BEAT = 0;
+const GAP_SHOW = 100;
+const GAP_BEAT = 60;
+const CLOSE_BEATS = [0, 20, 40, 60];
+const CLOSE_SHOW = 80;
+const CLOSE_CHECK = 55;
+const LEFT_TURNS = gridIndexes([13, 23]);
+const RIGHT_TURNS = gridIndexes([14, 24]);
 const UNUSED_CHANNEL = CHANNEL_COUNT - 1;
 const XLIGHTS_CHANNEL_COUNT = 200;
 const XLIGHTS_HEADLIGHTS = [1, 2, 3, 4];
@@ -56,6 +66,42 @@ describe("choreographPulse", () => {
     expect(levels(grid, BEAT_FRAME + 1, HEADLIGHTS)).toEqual(filled(HEADLIGHTS, faded));
     expect(levels(grid, BEAT_FRAME + 1, TURN_SIGNALS)).toEqual(filled(TURN_SIGNALS, OFF));
   });
+
+  it("alternates the turn signals when beats are more than one second apart", () => {
+    const grid = choreographPulse(spacedShow([FIRST_BEAT], GAP_SHOW));
+    const together = choreographPulse(spacedShow([FIRST_BEAT], GAP_SHOW), { mode: "together" });
+    const leftOn = GAP_FRAMES;
+    const rightOn = GAP_FRAMES + SIDE_FRAMES;
+
+    expect(levels(grid, leftOn - 1, TURN_SIGNALS)).toEqual(filled(TURN_SIGNALS, OFF));
+    expect(levels(grid, leftOn, LEFT_TURNS)).toEqual(filled(LEFT_TURNS, PULSE_ON));
+    expect(levels(grid, leftOn, RIGHT_TURNS)).toEqual(filled(RIGHT_TURNS, OFF));
+    expect(levels(grid, rightOn, RIGHT_TURNS)).toEqual(filled(RIGHT_TURNS, PULSE_ON));
+    expect(levels(grid, rightOn, LEFT_TURNS)).toEqual(filled(LEFT_TURNS, OFF));
+    expect(levels(together, leftOn, LEFT_TURNS)).toEqual(filled(LEFT_TURNS, PULSE_ON));
+    expect(levels(together, leftOn, RIGHT_TURNS)).toEqual(filled(RIGHT_TURNS, OFF));
+    expect(levels(together, rightOn, RIGHT_TURNS)).toEqual(filled(RIGHT_TURNS, PULSE_ON));
+    expect(levels(together, rightOn, LEFT_TURNS)).toEqual(filled(LEFT_TURNS, OFF));
+  });
+
+  it("does not fill a gap shorter than one second", () => {
+    const grid = choreographPulse(spacedShow(CLOSE_BEATS, CLOSE_SHOW));
+
+    expect(levels(grid, CLOSE_CHECK, TURN_SIGNALS)).toEqual(filled(TURN_SIGNALS, OFF));
+  });
+
+  it("flashes a beat after a gap normally", () => {
+    const faded = Math.round(PULSE_ON * PULSE_DECAY);
+    const split = choreographPulse(spacedShow([FIRST_BEAT, GAP_BEAT], GAP_BEAT + 2));
+    const together = choreographPulse(spacedShow([FIRST_BEAT, GAP_BEAT], GAP_BEAT + 2), {
+      mode: "together",
+    });
+
+    expect(levels(split, GAP_BEAT, HEADLIGHTS)).toEqual(filled(HEADLIGHTS, PULSE_ON));
+    expect(levels(split, GAP_BEAT, LEFT_TURNS)).toEqual(filled(LEFT_TURNS, faded));
+    expect(levels(split, GAP_BEAT, RIGHT_TURNS)).toEqual(filled(RIGHT_TURNS, OFF));
+    expect(levels(together, GAP_BEAT, LIGHTS)).toEqual(filled(LIGHTS, PULSE_ON));
+  });
 });
 
 function show(beat: Pick<AudioFrame, "bass" | "mids" | "treble">): AudioAnalysis {
@@ -76,6 +122,30 @@ function show(beat: Pick<AudioFrame, "bass" | "mids" | "treble">): AudioAnalysis
     frameRate: FRAME_RATE,
     frames,
     onsetTimes: [BEAT_TIME],
+  };
+}
+
+function spacedShow(beatFrames: readonly number[], frameCount: number): AudioAnalysis {
+  const frames: AudioFrame[] = [];
+  const onsetTimes: number[] = [];
+  for (let index = 0; index < frameCount; index += 1) {
+    const atBeat = beatFrames.includes(index);
+    if (atBeat) {
+      onsetTimes.push(index / FRAME_RATE);
+    }
+    frames.push({
+      time: index / FRAME_RATE,
+      bass: atBeat ? 1 : OFF,
+      mids: OFF,
+      treble: OFF,
+    });
+  }
+
+  return {
+    sampleRate: SAMPLE_RATE,
+    frameRate: FRAME_RATE,
+    frames,
+    onsetTimes,
   };
 }
 
