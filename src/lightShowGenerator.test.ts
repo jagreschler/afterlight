@@ -310,24 +310,6 @@ describe("light show generator", () => {
     expect(stored?.syncLights).toBe(CHECKED);
   });
 
-  it("keeps the show length selector visible and fixed at 30 seconds for iTunes", () => {
-    const view = mount();
-    view.generator.songSelected(song(FIRST_TITLE));
-    const itunesLength = view.root.querySelector(".show-length select");
-    if (!(itunesLength instanceof HTMLSelectElement)) {
-      throw new Error("missing show length");
-    }
-    const itunesVisible = itunesLength.hidden === false;
-
-    expect(itunesVisible).toBe(true);
-    expect(itunesLength.disabled).toBe(true);
-    expect(itunesLength.value).toBe(String(PREVIEW_SECONDS));
-
-    view.generator.songSelected(uploadedSong());
-
-    expect(itunesLength.disabled).toBe(false);
-  });
-
   it("keeps show length disabled at 30 seconds for an iTunes preview", () => {
     const view = mount();
 
