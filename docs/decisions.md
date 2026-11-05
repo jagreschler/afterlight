@@ -162,6 +162,10 @@ An iTunes preview is 30 seconds, so the show length control cannot change it. Th
 
 Long gaps between beats left the car dark. Model 3 and Model Y cannot hold a steady mid brightness, and the rear turn signals are only on or off, so a slow left/right turn-signal alternation fills those gaps instead of a fade. After one second without a beat, including the start of the song, the left turns stay on for about half a second, then the right turns, repeating until the next beat. Then the normal pulse flash resumes. This happens in both split and together modes. The not-on-beat check is written `onBeat === false` rather than `!onBeat` because the explicit comparison reads more plainly.
 
+## 2026-11-05 — Tag each version bump
+
+Whenever the version is bumped, a matching Git release tag, like `v0.2.0`, is created on that same commit. The tag is created after the pull request merges, because it points at the merge commit on main.
+
 ## 2026-11-05 — GitHub Pages deploys from GitHub Actions
 
 This was a manual GitHub setting change. In the repo's Settings, under Pages, Build and deployment, the Source was set to "GitHub Actions" instead of "Deploy from a branch". The project already builds and publishes the site with a GitHub Actions workflow, so deploying from a branch would conflict with it.
