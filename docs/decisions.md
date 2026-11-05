@@ -165,3 +165,7 @@ Long gaps between beats left the car dark. Model 3 and Model Y cannot hold a ste
 ## 2026-11-05 — GitHub Pages deploys from GitHub Actions
 
 This was a manual GitHub setting change. In the repo's Settings, under Pages, Build and deployment, the Source was set to "GitHub Actions" instead of "Deploy from a branch". The project already builds and publishes the site with a GitHub Actions workflow, so deploying from a branch would conflict with it.
+
+## 2026-11-05 — Release on version tag
+
+GitHub has no built-in setting to create a release when a tag is pushed. This workflow does it: pushing a `v*` tag, like `v0.2.0`, creates a GitHub Release with auto-generated notes. Tags pushed before this workflow existed, like `v0.2.0`, don't get a release automatically.
