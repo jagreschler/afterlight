@@ -157,3 +157,7 @@ After a show is built, Generate and Download share a row under the options. Chan
 ## 2026-11-04 — Show length stays visible for iTunes
 
 An iTunes preview is 30 seconds, so the show length control cannot change it. The control stays on screen, disabled, and set to 30, the same way Start at stays at 0. Hiding it would shift the row. An uploaded song still enables it. The disabled control is dimmed so it reads as unavailable.
+
+## 2026-11-05 — Gap filler for pulse
+
+Long gaps between beats left the car dark. Model 3 and Model Y cannot hold a steady mid brightness, and the rear turn signals are only on or off, so a slow left/right turn-signal alternation fills those gaps instead of a fade. After one second without a beat, including the start of the song, the left turns stay on for about half a second, then the right turns, repeating until the next beat. Then the normal pulse flash resumes. This happens in both split and together modes. The not-on-beat check is written `onBeat === false` rather than `!onBeat` because the explicit comparison reads more plainly.

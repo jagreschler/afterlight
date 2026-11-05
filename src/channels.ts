@@ -26,4 +26,14 @@ export const TURN_SIGNALS = [
   xlights(24), // Right rear turn
 ] as const;
 
+export const LEFT_TURN_SIGNALS = [
+  xlights(13), // Left front turn
+  xlights(23), // Left rear turn
+] as const;
+
+export const RIGHT_TURN_SIGNALS = [
+  xlights(14), // Right front turn
+  xlights(24), // Right rear turn
+] as const;
+
 export const LIGHTS = [...HEADLIGHTS, ...TURN_SIGNALS];
