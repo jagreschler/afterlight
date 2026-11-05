@@ -1,5 +1,6 @@
 import type { AudioAnalysis, AudioFrame } from "./analyzeAudio";
 import { CHANNEL_COUNT, HEADLIGHTS, LIGHTS, TURN_SIGNALS } from "./channels";
+import { gapSides } from "./gapFiller";
 
 export const PULSE_ON = 255;
 export const PULSE_DECAY = 0.5;
@@ -17,13 +18,25 @@ export function choreographPulse(
   const mode = options.mode ?? "split";
   const beats = beatFrames(analysis);
   const grid: Uint8Array[] = [];
+  let lastBeat = 0;
 
   for (let index = 0; index < analysis.frames.length; index += 1) {
-    const frame = decay(grid[index - 1]);
-    if (beats.has(index)) {
+    const previous = grid[index - 1];
+    const frame = decay(previous);
+    const onBeat = beats.has(index);
+    if (onBeat) {
+      lastBeat = index;
       const features = analysis.frames[index];
       if (features !== undefined) {
-        flash(frame, channelsFor(features, mode));
+        const channels = channelsFor(features, mode);
+        flash(frame, channels);
+      }
+    }
+    if (!onBeat) {
+      const sides = gapSides(index, lastBeat);
+      if (sides !== null) {
+        flash(frame, sides.on);
+        turnOff(frame, sides.off);
       }
     }
     grid.push(frame);
@@ -61,6 +74,12 @@ function channelsFor(frame: AudioFrame, mode: PulseMode): readonly number[] {
 function flash(frame: Uint8Array, channels: readonly number[]): void {
   for (const channel of channels) {
     frame[channel] = PULSE_ON;
+  }
+}
+
+function turnOff(frame: Uint8Array, channels: readonly number[]): void {
+  for (const channel of channels) {
+    frame[channel] = 0;
   }
 }
 

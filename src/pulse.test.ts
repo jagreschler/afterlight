@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { SAMPLE_RATE, type AudioAnalysis, type AudioFrame } from "./analyzeAudio";
-import { CHANNEL_COUNT, HEADLIGHTS, LIGHTS, TURN_SIGNALS } from "./channels";
+import { CHANNEL_COUNT, HEADLIGHTS, LEFT_TURN_SIGNALS, LIGHTS, RIGHT_TURN_SIGNALS, TURN_SIGNALS } from "./channels";
 import { choreographPulse, PULSE_DECAY, PULSE_ON } from "./pulse";
 
 const FRAME_RATE = 50;
@@ -27,6 +27,8 @@ describe("choreographPulse", () => {
     expect(CHANNEL_COUNT).toBe(XLIGHTS_CHANNEL_COUNT);
     expect([...HEADLIGHTS]).toEqual(gridIndexes(XLIGHTS_HEADLIGHTS));
     expect([...TURN_SIGNALS]).toEqual(gridIndexes(XLIGHTS_TURN_SIGNALS));
+    expect([...LEFT_TURN_SIGNALS]).toEqual(LEFT_TURNS);
+    expect([...RIGHT_TURN_SIGNALS]).toEqual(RIGHT_TURNS);
   });
 
   it("flashes the headlights on a bass beat and leaves the other channels off", () => {
