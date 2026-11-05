@@ -32,7 +32,7 @@ export function choreographPulse(
         flash(frame, channels);
       }
     }
-    if (!onBeat) {
+    if (onBeat === false) {
       const sides = gapSides(index, lastBeat);
       if (sides !== null) {
         flash(frame, sides.on);
