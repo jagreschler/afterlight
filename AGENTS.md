@@ -8,6 +8,12 @@ Standing rules for agents. For why past choices were made, read `docs/decisions.
 - `appVersion.ts` is the only module that reads the version. Configs share values through small modules and never depend on each other.
 - A fresh clone must run with one setup command (`npm ci`, then `npm run dev`). If setup changes, fix it in the same PR.
 
+## Branches (Git flow)
+- Feature branches come off `develop`, or off `main` when there is no `develop` branch.
+- Hotfix branches come straight off `main`.
+- Release branches are cut from `develop`.
+- No direct pushes to `main`, ever. Everything reaches it through a pull request.
+
 ## Before you start
 - Never commit to main, ever. Every change goes on its own branch, cut from the latest `origin/main` (run `git fetch origin` first).
 - Every change reaches main only through a pull request that Jason reviews and approves.
@@ -51,4 +57,3 @@ Standing rules for agents. For why past choices were made, read `docs/decisions.
 ## Repo-specific
 - A show is one 200-channel FSEQ at 20 ms, written for Tesla's Model S xLights layout. Model 3 and Model Y share some bulbs, so pulse does not drive those channels (`src/channels.ts`).
 - Catalog songs are the 30-second iTunes preview, and `src/itunes.ts` is the only module that talks to Apple. An uploaded file can run 30, 45, or 60 seconds and can start later in the song.
-- Test files are not split at about 100 lines. Split a test file only around 200–400 lines.
