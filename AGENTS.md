@@ -47,7 +47,8 @@ Standing rules for agents. For why past choices were made, read `docs/decisions.
 - Hidden behavior: no magic, no metaprogramming, no clever tricks.
 - Environment checks scattered around. Dev mode comes in through one object.
 - Vague class names like Manager, Helper, or Utils, or words that are both noun and verb.
-- `any`, and `!` on a boolean. For booleans write `x === false`. For values that may be null or undefined, check them explicitly (for example `x === undefined`).
+- `any`.
+- Never use `!` for negation; it's easy to miss when reading. Write `x === false` for booleans, and `x === undefined` or `x === null` for values that may be missing.
 - Source files over about 100 lines.
 
 ## Reviews
