@@ -47,14 +47,13 @@ Standing rules for agents. For why past choices were made, read `docs/decisions.
 - Hidden behavior: no magic, no metaprogramming, no clever tricks.
 - Environment checks scattered around. Dev mode comes in through one object.
 - Vague class names like Manager, Helper, or Utils, or words that are both noun and verb.
-- `any`.
-- Never use `!` for negation; it's easy to miss when reading. Write `x === false` for booleans, and `x === undefined` or `x === null` for values that may be missing.
+- `any`, and `!x`. Write `x === false`.
 - Source files over about 100 lines.
 
 ## Reviews
 - When the same review comment comes up twice, propose a lint or CI check for it. Don't just leave a note.
 - Every PR gets a short plain-English "What this does and why" section.
-- Never merge or delete a branch without Jason's OK.
+- Never push to main. Never merge or delete a branch without Jason's OK.
 
 ## Repo-specific
 - A show is one 200-channel FSEQ at 20 ms, written for Tesla's Model S xLights layout. Model 3 and Model Y share some bulbs, so pulse does not drive those channels (`src/channels.ts`).
