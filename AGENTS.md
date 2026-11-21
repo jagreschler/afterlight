@@ -30,6 +30,7 @@ Standing rules for agents. For why past choices were made, read `docs/decisions.
 ## Proof of done
 - Write tests first. For a bug, add a test that fails before the fix and passes after.
 - Test behavior a player would notice. Never hard-code stored data like coordinates or full lists. Keep tests few, short, and clearly named.
+- When a test file grows past about 200 lines or starts covering more than one behavior, split it into smaller files, one per behavior. Same tests, smaller files, fewer merge conflicts.
 - Typecheck, tests, and build must pass.
 - For visual changes, check the running app at phone and desktop sizes and include screenshots.
 - Use heavy checks only for risky features. For a simple fix, just say it's cheaper for Jason to check it himself.
