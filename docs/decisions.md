@@ -177,3 +177,7 @@ GitHub has no built-in setting to create a release when a tag is pushed. This wo
 ## 2026-11-21 — Agent rules and feature notes
 
 `AGENTS.md` holds standing rules for agents. `docs/decisions.md` holds the history. `docs/features` holds per-feature notes. Review fixes: branch names are generic JIRA style, and the wording is for a light show rather than a game. The `!x` bullet and the repeated "Never push to main" line stay as first written.
+
+## 2026-11-21 — Gitflow reference
+
+The Branches section of `AGENTS.md` now links the Atlassian Gitflow write-up and a short summary of how feature, release, and hotfix branches move. It is there so agents follow Jason's release process: stable, tagged releases on `main`, and branch off `main` until a `develop` branch exists.

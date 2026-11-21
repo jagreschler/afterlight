@@ -14,6 +14,12 @@ Standing rules for agents. For why past choices were made, read `docs/decisions.
 - Release branches are cut from `develop`.
 - No direct pushes to `main`, ever. Everything reaches it through a pull request.
 
+[Gitflow workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow):
+- Feature branches come off `develop` and merge back into it.
+- A release branch comes off `develop`, takes only fixes, then merges into both `main` and `develop` and gets a version tag.
+- Hotfixes are the only branches cut from `main`, and they merge into both `main` and `develop`.
+- `main` only ever holds stable, tagged releases. This repo has no `develop` yet because Jason is the only programmer; branch off `main` until one exists.
+
 ## Before you start
 - Never commit to main, ever. Every change goes on its own branch, cut from the latest `origin/main` (run `git fetch origin` first).
 - Every change reaches main only through a pull request that Jason reviews and approves.
