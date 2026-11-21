@@ -17,7 +17,7 @@ Standing rules for agents. For why past choices were made, read `docs/decisions.
 ## Before you start
 - Never commit to main, ever. Every change goes on its own branch, cut from the latest `origin/main` (run `git fetch origin` first).
 - Every change reaches main only through a pull request that Jason reviews and approves.
-- Use JIRA-style branch names, like `DUN-29-load-reference-image`.
+- Name branches in JIRA style, with the project name or abbreviation first: PROJ-TICKET-NUMBER-FEATURE-NAME.
 - Work on the named problem in the brief. Make one small, targeted change per PR.
 - No unrequested refactors. Change architecture only when it clearly makes the code better, and say why.
 - Read the feature note in `docs/features/` for any feature you touch.
@@ -25,11 +25,11 @@ Standing rules for agents. For why past choices were made, read `docs/decisions.
 ## Design
 - Prefer composition over inheritance. Build from small parts you pick, not a parent class that can change under you.
 - Publish a past-tense event, like `OverlayDrawn`, instead of handling downstream effects inside a class.
-- Keep entry files thin, and keep gameplay separate from display.
+- Keep entry files thin, and keep show logic separate from display.
 
 ## Proof of done
 - Write tests first. For a bug, add a test that fails before the fix and passes after.
-- Test behavior a player would notice. Never hard-code stored data like coordinates or full lists. Keep tests few, short, and clearly named.
+- Test a user would notice. Never hard-code stored data like coordinates or full lists. Keep tests few, short, and clearly named.
 - When a test file grows past about 200 lines or starts covering more than one behavior, split it into smaller files, one per behavior. Same tests, smaller files, fewer merge conflicts.
 - Typecheck, tests, and build must pass.
 - For visual changes, check the running app at phone and desktop sizes and include screenshots.
@@ -47,13 +47,13 @@ Standing rules for agents. For why past choices were made, read `docs/decisions.
 - Hidden behavior: no magic, no metaprogramming, no clever tricks.
 - Environment checks scattered around. Dev mode comes in through one object.
 - Vague class names like Manager, Helper, or Utils, or words that are both noun and verb.
-- `any`, and `!x`. Write `x === false`.
+- `any`, and `!` on a boolean. For booleans write `x === false`. For values that may be null or undefined, check them explicitly (for example `x === undefined`).
 - Source files over about 100 lines.
 
 ## Reviews
 - When the same review comment comes up twice, propose a lint or CI check for it. Don't just leave a note.
 - Every PR gets a short plain-English "What this does and why" section.
-- Never push to main. Never merge or delete a branch without Jason's OK.
+- Never merge or delete a branch without Jason's OK.
 
 ## Repo-specific
 - A show is one 200-channel FSEQ at 20 ms, written for Tesla's Model S xLights layout. Model 3 and Model Y share some bulbs, so pulse does not drive those channels (`src/channels.ts`).

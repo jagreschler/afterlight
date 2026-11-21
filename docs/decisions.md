@@ -176,4 +176,4 @@ GitHub has no built-in setting to create a release when a tag is pushed. This wo
 
 ## 2026-11-21 — Agent rules and feature notes
 
-`AGENTS.md` holds standing rules for agents. `docs/decisions.md` holds the history. `docs/features` holds per-feature notes.
+`AGENTS.md` holds standing rules for agents. `docs/decisions.md` holds the history. `docs/features` holds per-feature notes. Review fixes: branch names are generic JIRA style, the never-commit-to-main rule is stated once, boolean checks stay explicit, and the wording is for a light show rather than a game.
